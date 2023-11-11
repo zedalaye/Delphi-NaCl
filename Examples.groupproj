@@ -3,6 +3,15 @@
         <ProjectGuid>{E6D26ADD-07EF-4BDD-AD05-132BD7480D9C}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
+        <Projects Include="examples\test_library_info.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="examples\test_encoding.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="examples\test_align_memory.dproj">
+            <Dependencies/>
+        </Projects>
         <Projects Include="examples\test_aead_aegis128l.dproj">
             <Dependencies/>
         </Projects>
@@ -27,6 +36,24 @@
         <Projects Include="examples\test_hash_generichash.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="examples\test_auth_hmac_sha256.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="examples\test_auth_hmac_sha512.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="examples\test_auth_hmac_sha512256.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="examples\test_auth.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="examples\test_box.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="examples\test_sign.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,6 +62,33 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
+    <Target Name="test_library_info">
+        <MSBuild Projects="examples\test_library_info.dproj"/>
+    </Target>
+    <Target Name="test_library_info:Clean">
+        <MSBuild Projects="examples\test_library_info.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="test_library_info:Make">
+        <MSBuild Projects="examples\test_library_info.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="test_encoding">
+        <MSBuild Projects="examples\test_encoding.dproj"/>
+    </Target>
+    <Target Name="test_encoding:Clean">
+        <MSBuild Projects="examples\test_encoding.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="test_encoding:Make">
+        <MSBuild Projects="examples\test_encoding.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="test_align_memory">
+        <MSBuild Projects="examples\test_align_memory.dproj"/>
+    </Target>
+    <Target Name="test_align_memory:Clean">
+        <MSBuild Projects="examples\test_align_memory.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="test_align_memory:Make">
+        <MSBuild Projects="examples\test_align_memory.dproj" Targets="Make"/>
+    </Target>
     <Target Name="test_aead_aegis128l">
         <MSBuild Projects="examples\test_aead_aegis128l.dproj"/>
     </Target>
@@ -107,14 +161,68 @@
     <Target Name="test_hash_generichash:Make">
         <MSBuild Projects="examples\test_hash_generichash.dproj" Targets="Make"/>
     </Target>
+    <Target Name="test_auth_hmac_sha256">
+        <MSBuild Projects="examples\test_auth_hmac_sha256.dproj"/>
+    </Target>
+    <Target Name="test_auth_hmac_sha256:Clean">
+        <MSBuild Projects="examples\test_auth_hmac_sha256.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="test_auth_hmac_sha256:Make">
+        <MSBuild Projects="examples\test_auth_hmac_sha256.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="test_auth_hmac_sha512">
+        <MSBuild Projects="examples\test_auth_hmac_sha512.dproj"/>
+    </Target>
+    <Target Name="test_auth_hmac_sha512:Clean">
+        <MSBuild Projects="examples\test_auth_hmac_sha512.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="test_auth_hmac_sha512:Make">
+        <MSBuild Projects="examples\test_auth_hmac_sha512.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="test_auth_hmac_sha512256">
+        <MSBuild Projects="examples\test_auth_hmac_sha512256.dproj"/>
+    </Target>
+    <Target Name="test_auth_hmac_sha512256:Clean">
+        <MSBuild Projects="examples\test_auth_hmac_sha512256.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="test_auth_hmac_sha512256:Make">
+        <MSBuild Projects="examples\test_auth_hmac_sha512256.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="test_auth">
+        <MSBuild Projects="examples\test_auth.dproj"/>
+    </Target>
+    <Target Name="test_auth:Clean">
+        <MSBuild Projects="examples\test_auth.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="test_auth:Make">
+        <MSBuild Projects="examples\test_auth.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="test_box">
+        <MSBuild Projects="examples\test_box.dproj"/>
+    </Target>
+    <Target Name="test_box:Clean">
+        <MSBuild Projects="examples\test_box.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="test_box:Make">
+        <MSBuild Projects="examples\test_box.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="test_sign">
+        <MSBuild Projects="examples\test_sign.dproj"/>
+    </Target>
+    <Target Name="test_sign:Clean">
+        <MSBuild Projects="examples\test_sign.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="test_sign:Make">
+        <MSBuild Projects="examples\test_sign.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="test_aead_aegis128l;test_aead_aegis256;test_aead_chacha20poly1305_ietf;test_aead_chacha20poly1305;test_aead_xchacha20poly1305_ietf;test_hash_sha256;test_hash_sha512;test_hash_generichash"/>
+        <CallTarget Targets="test_library_info;test_encoding;test_align_memory;test_aead_aegis128l;test_aead_aegis256;test_aead_chacha20poly1305_ietf;test_aead_chacha20poly1305;test_aead_xchacha20poly1305_ietf;test_hash_sha256;test_hash_sha512;test_hash_generichash;test_auth_hmac_sha256;test_auth_hmac_sha512;test_auth_hmac_sha512256;test_auth;test_box;test_sign"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="test_aead_aegis128l:Clean;test_aead_aegis256:Clean;test_aead_chacha20poly1305_ietf:Clean;test_aead_chacha20poly1305:Clean;test_aead_xchacha20poly1305_ietf:Clean;test_hash_sha256:Clean;test_hash_sha512:Clean;test_hash_generichash:Clean"/>
+        <CallTarget Targets="test_library_info:Clean;test_encoding:Clean;test_align_memory:Clean;test_aead_aegis128l:Clean;test_aead_aegis256:Clean;test_aead_chacha20poly1305_ietf:Clean;test_aead_chacha20poly1305:Clean;test_aead_xchacha20poly1305_ietf:Clean;test_hash_sha256:Clean;test_hash_sha512:Clean;test_hash_generichash:Clean;test_auth_hmac_sha256:Clean;test_auth_hmac_sha512:Clean;test_auth_hmac_sha512256:Clean;test_auth:Clean;test_box:Clean;test_sign:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="test_aead_aegis128l:Make;test_aead_aegis256:Make;test_aead_chacha20poly1305_ietf:Make;test_aead_chacha20poly1305:Make;test_aead_xchacha20poly1305_ietf:Make;test_hash_sha256:Make;test_hash_sha512:Make;test_hash_generichash:Make"/>
+        <CallTarget Targets="test_library_info:Make;test_encoding:Make;test_align_memory:Make;test_aead_aegis128l:Make;test_aead_aegis256:Make;test_aead_chacha20poly1305_ietf:Make;test_aead_chacha20poly1305:Make;test_aead_xchacha20poly1305_ietf:Make;test_hash_sha256:Make;test_hash_sha512:Make;test_hash_generichash:Make;test_auth_hmac_sha256:Make;test_auth_hmac_sha512:Make;test_auth_hmac_sha512256:Make;test_auth:Make;test_box:Make;test_sign:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
