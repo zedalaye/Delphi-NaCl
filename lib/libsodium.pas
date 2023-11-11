@@ -1969,6 +1969,9 @@ const
   _CRYPTO_BOX_MACBYTES = _CRYPTO_BOX_CURVE25519XSALSA20POLY1305_MACBYTES;
 function  crypto_box_macbytes: NativeUInt; cdecl; external SODIUM_LIB;
 
+type
+  TCryptoBoxMac = array[0.._CRYPTO_BOX_MACBYTES -1] of Byte;
+
 const
   _CRYPTO_BOX_MESSAGEBYTES_MAX = _CRYPTO_BOX_CURVE25519XSALSA20POLY1305_MESSAGEBYTES_MAX;
 function  crypto_box_messagebytes_max: NativeUInt; cdecl; external SODIUM_LIB;
@@ -1994,7 +1997,7 @@ function crypto_box_open_easy(m: PByte; const c: PByte;
                               clen: UInt64; const n: PByte;
                               const pk: PByte; const sk: PByte): Integer; cdecl; external SODIUM_LIB;
 
-function crypto_box_detached(c: PByte; max: PByte;
+function crypto_box_detached(c: PByte; mac: PByte;
                              const m: PByte; mlen: UInt64;
                              const n: PByte; const pk: PByte;
                              const sk: PByte): Integer; cdecl; external SODIUM_LIB;
@@ -2827,6 +2830,9 @@ const
   _CRYPTO_SCALARMULT_CURVE25519_BYTES = 32;
 function crypto_scalarmult_curve25519_bytes: NativeUInt; cdecl; external SODIUM_LIB;
 
+type
+  TCryptoScalarMultCurve25519Key = array[0.._CRYPTO_SCALARMULT_CURVE25519_BYTES -1] of Byte;
+
 const
   _CRYPTO_SCALARMULT_CURVE25519_SCALARBYTES = 32;
 function crypto_scalarmult_curve25519_scalarbytes: NativeUInt; cdecl; external SODIUM_LIB;
@@ -3307,7 +3313,7 @@ const
 function crypto_sign_bytes: NativeUInt; cdecl; external SODIUM_LIB;
 
 type
-  TCryptoSign = array[0.._CRYPTO_SIGN_BYTES -1] of Byte;
+  TCryptoSignature = array[0.._CRYPTO_SIGN_BYTES -1] of Byte;
 
 const
   _CRYPTO_SIGN_SEEDBYTES = _CRYPTO_SIGN_ED25519_SEEDBYTES;
@@ -3375,7 +3381,7 @@ function crypto_sign_final_verify(var state: TCryptoSignState; const sig: PByte;
 (* sodium/crypto_verify_16.h *)
 
 const
-  _crypto_verify_16_BYTES = 16;
+  _CRYPTO_VERIFY_16_BYTES = 16;
 function crypto_verify_16_bytes: NativeUInt; cdecl; external SODIUM_LIB;
 
 function crypto_verify_16(const x: PByte; const y: PByte): Integer; cdecl; external SODIUM_LIB;
@@ -3383,7 +3389,7 @@ function crypto_verify_16(const x: PByte; const y: PByte): Integer; cdecl; exter
 (* sodium/crypto_verify_32.h *)
 
 const
-  _crypto_verify_32_BYTES = 32;
+  _CRYPTO_VERIFY_32_BYTES = 32;
 function crypto_verify_32_bytes: NativeUInt; cdecl; external SODIUM_LIB;
 
 function crypto_verify_32(const x: PByte; const y: PByte): Integer; cdecl; external SODIUM_LIB;
@@ -3391,7 +3397,7 @@ function crypto_verify_32(const x: PByte; const y: PByte): Integer; cdecl; exter
 (* sodium/crypto_verify_64.h *)
 
 const
-  _crypto_verify_64_BYTES = 64;
+  _CRYPTO_VERIFY_64_BYTES = 64;
 function crypto_verify_64_bytes: NativeUInt; cdecl; external SODIUM_LIB;
 
 function crypto_verify_64(const x: PByte; const y: PByte): Integer; cdecl; external SODIUM_LIB;
@@ -3547,5 +3553,8 @@ begin
   Result := SODIUM_MIN(SODIUM_SIZE_MAX - _CRYPTO_SECRETSTREAM_XCHACHA20POLY1305_ABYTES,
                        (UInt64(64) * ((UInt64(1) shl 32) - UInt64(2))));
 end;
+
+initialization
+  sodium_init;
 
 end.
