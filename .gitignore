@@ -2,6 +2,7 @@ __history
 __recovery
 *.dcu
 *.exe
+*.rsm
 *.groupproj.local
 *.dproj.local
 *.identcache
