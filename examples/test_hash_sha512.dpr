@@ -31,10 +31,32 @@ begin
     WriteLn('FAILED');
 end;
 
+procedure test_multiple_blocks;
+const
+  M: array[0..2] of string = ('Message', 'split over', '3 lines');
+var
+  &Out: TCryptoHashSha512Hash;
+begin
+  var I := 0;
+  if TCryptoHash.Sha512(&Out,
+       procedure(var Buffer: TBytes; var Done: Boolean)
+       begin
+         Buffer := TEncoding.UTF8.GetBytes(M[I]);
+         Done := I >= High(M);
+         Inc(I);
+       end
+     )
+  then
+    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+  else
+    WriteLn('FAILED');
+end;
+
 begin
   try
     Write('API...'); test_api;
     Write('Wrapper...'); test;
+    Write('Wrapper...'); test_multiple_blocks;
   except
     on E: Exception do
       Writeln(E.ClassName, ': ', E.Message);
