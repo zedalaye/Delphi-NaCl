@@ -77,7 +77,18 @@ type
     class function Verify(const B1, B2: TBytes): Boolean; overload; static;
   end;
 
+{ Because @B[0] when B is empty is not nil }
+function BytesPointer(B: TBytes): PByte;
+
 implementation
+
+function BytesPointer(B: TBytes): PByte;
+begin
+  if Length(B) = 0 then
+    Result := nil
+  else
+    Result := @B[0];
+end;
 
 { THexEncode }
 

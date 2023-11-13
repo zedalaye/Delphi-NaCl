@@ -80,14 +80,6 @@ type
 
 implementation
 
-function BytesPointer(B: TBytes): PByte;
-begin
-  if Length(B) = 0 then
-    Result := nil
-  else
-    Result := @B[0];
-end;
-
 { TCryptoAeadAegis128l }
 
 class function TCryptoAeadAegis128l.Keygen: TCryptoAeadAegis128lKey;
