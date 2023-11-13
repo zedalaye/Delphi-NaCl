@@ -12,30 +12,6 @@ uses
   libsodium in '..\lib\libsodium.pas',
   Sodium.Utils in '..\lib\Sodium.Utils.pas';
 
-procedure crypto_kdf_test;
-const
-  CONTEXT: RawByteString = 'CONTEXT';
-var
-  master_key: TCryptoKdfKey;
-  ctx: TCryptoKdfContext;
-  subkey_1: array[0..31] of Byte;
-  subkey_2: array[0..31] of Byte;
-  subkey_3: array[0..63] of Byte;
-begin
-  Move(CONTEXT[1], ctx[0], SizeOf(ctx));
-
-  crypto_kdf_keygen(master_key);
-
-  crypto_kdf_derive_from_key(@subkey_1[0], SizeOf(subkey_1), 1, ctx, master_key);
-  crypto_kdf_derive_from_key(@subkey_2[0], SizeOf(subkey_2), 2, ctx, master_key);
-  crypto_kdf_derive_from_key(@subkey_3[0], SizeOf(subkey_3), 3, ctx, master_key);
-
-  WriteLn('master_key=', THexEncode.FromBytes(master_key, SizeOf(master_key)));
-  WriteLn('subkey_1=',   THexEncode.FromBytes(@subkey_1[0], SizeOf(subkey_1)));
-  WriteLn('subkey_2=',   THexEncode.FromBytes(@subkey_2[0], SizeOf(subkey_2)));
-  WriteLn('subkey_3=',   THexEncode.FromBytes(@subkey_3[0], SizeOf(subkey_3)));
-end;
-
 procedure crypto_kx_test;
 var
   client_pk: TCryptoKxPublicKey;
@@ -232,7 +208,6 @@ begin
   try
     crypto_short_hash_test;
     crypto_secretbox_test;
-    crypto_kdf_test;
     crypto_kx_test;
     crypto_onetimeauth_test;
     crypto_scalarmult_test;
