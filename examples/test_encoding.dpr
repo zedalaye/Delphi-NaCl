@@ -25,7 +25,7 @@ begin
   Write('test (Variant=', VariantName[Variant], ', ', PaddingName[Padding], ')');
 
   B64 := TBase64Encode.FromBytes(Buf, Variant, Padding);
-//  Insert('!', B64, 12);
+//  Insert('!', B64, 12); { Corrupt the Base64 string }
   if TBase64Encode.ToBytes(DecodedBuf, B64, Variant, Padding) then
     if check_buffers(Buf, DecodedBuf) then
       WriteLn(' => OK')
