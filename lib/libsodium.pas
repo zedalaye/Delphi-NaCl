@@ -2130,7 +2130,7 @@ function crypto_kdf_hkdf_sha256_extract(var prk: TCryptoKdfHkdfSha256Key;
 procedure crypto_kdf_hkdf_sha256_keygen(var prk: TCryptoKdfHkdfSha256Key); cdecl; external SODIUM_LIB;
 
 function crypto_kdf_hkdf_sha256_expand(&out: PByte; out_len: NativeUInt;
-                                       const ctx: PAnsiChar; ctx_len: UInt64;
+                                       const ctx: PAnsiChar; ctx_len: NativeUInt;
                                        const prk: TCryptoKdfHkdfSha256Key): Integer; cdecl; external SODIUM_LIB;
 
 (* ------------------------------------------------------------------------- *)
@@ -2175,7 +2175,7 @@ function crypto_kdf_hkdf_sha512_extract(var prk: TCryptoKdfHkdfSha512Key;
 procedure crypto_kdf_hkdf_sha512_keygen(var prk: TCryptoKdfHkdfSha512Key); cdecl; external SODIUM_LIB;
 
 function crypto_kdf_hkdf_sha512_expand(&out: PByte; out_len: NativeUInt;
-                                       const ctx: PAnsiChar; ctx_len: UInt64;
+                                       const ctx: PAnsiChar; ctx_len: NativeUInt;
                                        const prk: TCryptoKdfHkdfSha512Key): Integer; cdecl; external SODIUM_LIB;
 
 (* ------------------------------------------------------------------------- *)
