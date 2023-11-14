@@ -46,7 +46,8 @@ begin
     end;
 
   WriteLn('SUCCESS');
-  WriteLn('SubKey', I+1, '=', THexEncode.FromBytes(SubKeys[I]));
+  for I := Low(SubKeys) to High(SubKeys) do
+    WriteLn('SubKey', I+1, '=', THexEncode.FromBytes(SubKeys[I]));
 end;
 
 var

@@ -2340,7 +2340,7 @@ const
 function crypto_onetimeauth_bytes: NativeUInt; cdecl; external SODIUM_LIB;
 
 type
-  TCryptoOnetimeAuth = array[0.._crypto_onetimeauth_BYTES -1] of Byte;
+  TCryptoOnetimeAuthTag = array[0.._crypto_onetimeauth_BYTES -1] of Byte;
 
 const
   _crypto_onetimeauth_KEYBYTES = _crypto_onetimeauth_poly1305_KEYBYTES;
@@ -2864,6 +2864,9 @@ const
   _CRYPTO_SCALARMULT_SCALARBYTES = _CRYPTO_SCALARMULT_CURVE25519_SCALARBYTES;
 function crypto_scalarmult_scalarbytes: NativeUInt; cdecl; external SODIUM_LIB;
 
+type
+  TCryptoScalarMultScalar = array[0.._CRYPTO_SCALARMULT_SCALARBYTES -1] of Byte;
+
 const
   _CRYPTO_SCALARMULT_PRIMITIVE = 'curve25519';
 function crypto_scalarmult_primitive: PAnsiChar; cdecl; external SODIUM_LIB;
@@ -3164,7 +3167,7 @@ const
 function crypto_shorthash_bytes: NativeUInt; cdecl; external SODIUM_LIB;
 
 type
-  TCryptoShortHash = array[0.._CRYPTO_SHORTHASH_BYTES -1] of Byte;
+  TCryptoShortHashHash = array[0.._CRYPTO_SHORTHASH_BYTES -1] of Byte;
 
 const
   _CRYPTO_SHORTHASH_KEYBYTES = _CRYPTO_SHORTHASH_SIPHASH24_KEYBYTES;

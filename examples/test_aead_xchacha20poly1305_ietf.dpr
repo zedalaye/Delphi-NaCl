@@ -63,8 +63,8 @@ begin
 
   key := TCryptoAeadXChacha20poly1305Ietf.Keygen;
 
-  TZero.Fill(nonce, SizeOf(nonce));
-  TRandom.Bytes(nonce, SizeOf(nonce));
+  TBytes.Zero(nonce, SizeOf(nonce));
+  TBytes.Random(nonce, SizeOf(nonce));
 
   if TCryptoAeadXChacha20poly1305Ietf.Encrypt(ciphertext, cleartext, [], nonce, key) then
     if TCryptoAeadXChacha20poly1305Ietf.Decrypt(decrypted, ciphertext, [], nonce, key) then

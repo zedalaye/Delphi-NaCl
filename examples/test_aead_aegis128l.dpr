@@ -63,8 +63,8 @@ begin
 
   key := TCryptoAeadAegis128l.Keygen;
 
-  TZero.Fill(nonce, SizeOf(nonce));
-  TRandom.Bytes(nonce, SizeOf(nonce));
+  TBytes.Zero(nonce, SizeOf(nonce));
+  TBytes.Random(nonce, SizeOf(nonce));
 
   if TCryptoAeadAegis128l.Encrypt(ciphertext, cleartext, [], nonce, key) then
     if TCryptoAeadAegis128l.Decrypt(decrypted, ciphertext, [], nonce, key) then

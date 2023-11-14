@@ -77,7 +77,7 @@ var
   InBuf: TBytes;
   AdBuf: TBytes;
   OutBuf: TBytes;
-  OutBufLen: NativeUInt;
+  OutBufLen: UInt64;
 begin
   if crypto_secretstream_xchacha20poly1305_init_push(State, Header, Key) <> 0 then
     Exit(False);
@@ -119,7 +119,7 @@ var
   InBuf: TBytes;
   AdBuf: TBytes;
   OutBuf: TBytes;
-  OutBufLen: NativeUInt;
+  OutBufLen: UInt64;
   TagByte: Byte;
 begin
   if crypto_secretstream_xchacha20poly1305_init_pull(State, Header, Key) <> 0 then
