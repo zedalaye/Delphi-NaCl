@@ -20,7 +20,7 @@ type
   TCryptoPwHash = record
      class function Primitive: string; static;
 
-     class function DeriveKey(Key: PByte; KeyLen: UInt64;
+     class function DeriveKey(var Key; KeyLen: UInt64;
                               const Password: string;
                               const Salt: TCryptoPwHashSalt;
                               OpsLimit: UInt64 = _CRYPTO_PWHASH_OPSLIMIT_INTERACTIVE;
@@ -51,7 +51,7 @@ begin
   Result := string(crypto_pwhash_primitive);
 end;
 
-class function TCryptoPwHash.DeriveKey(Key: PByte; KeyLen: UInt64;
+class function TCryptoPwHash.DeriveKey(var Key; KeyLen: UInt64;
   const Password: string; const Salt: TCryptoPwHashSalt; OpsLimit: UInt64;
   MemLimit: NativeUInt; Algorithm: TCryptoPwHashAlgorithm): Boolean;
 var
@@ -62,13 +62,13 @@ begin
 
   Pwd := UTF8String(Password);
 
-  if Length(Pwd) < crypto_pwhash_passwd_min then
+  if NativeUInt(Length(Pwd)) < crypto_pwhash_passwd_min then
     raise EArgumentException.Create('Password is too short');
 
-  if Length(Pwd) > crypto_pwhash_passwd_max then
+  if NativeUInt(Length(Pwd)) > crypto_pwhash_passwd_max then
     raise EArgumentException.Create('Password is too big');
 
-  Result := crypto_pwhash(Key, KeyLen,
+  Result := crypto_pwhash(@Key, KeyLen,
               PAnsiChar(Pwd), Length(Pwd),
               @Salt[0],
               OpsLimit, MemLimit,
@@ -82,10 +82,10 @@ var
 begin
   Pwd := UTF8String(Password);
 
-  if Length(Pwd) < crypto_pwhash_passwd_min then
+  if NativeUInt(Length(Pwd)) < crypto_pwhash_passwd_min then
     raise EArgumentException.Create('Password is too short');
 
-  if Length(Pwd) > crypto_pwhash_passwd_max then
+  if NativeUInt(Length(Pwd)) > crypto_pwhash_passwd_max then
     raise EArgumentException.Create('Password is too big');
 
   Result := crypto_pwhash_str(&Out, PAnsiChar(Pwd), Length(Pwd),
@@ -100,10 +100,10 @@ var
 begin
   Pwd := UTF8String(Password);
 
-  if Length(Pwd) < crypto_pwhash_passwd_min then
+  if NativeUInt(Length(Pwd)) < crypto_pwhash_passwd_min then
     raise EArgumentException.Create('Password is too short');
 
-  if Length(Pwd) > crypto_pwhash_passwd_max then
+  if NativeUInt(Length(Pwd)) > crypto_pwhash_passwd_max then
     raise EArgumentException.Create('Password is too big');
 
   Result := crypto_pwhash_str_alg(&Out, PAnsiChar(Pwd), Length(Pwd),

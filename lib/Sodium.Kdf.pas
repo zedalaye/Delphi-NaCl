@@ -12,10 +12,8 @@ type
 
     class function Keygen: TCryptoKdfKey; static;
 
-    class function DeriveFromKey(
-      var SubKey: TBytes; SubKeyLen: NativeUInt; SubKeyId: UInt64;
-      const Context: TCryptoKdfContext;
-      const MasterKey: TCryptoKdfKey): Boolean; static;
+    class function DeriveFromKey(var SubKey; SubKeyLen: NativeUInt; SubKeyId: UInt64;
+      const Context: TCryptoKdfContext; const MasterKey: TCryptoKdfKey): Boolean; static;
   end;
 
   TCryptoKdfHkdfSha256 = record
@@ -26,7 +24,7 @@ type
     class function Extract(var MasterKey: TCryptoKdfHkdfSha256Key;
       const Salt: TBytes; const InputKeyingMaterialProc: TCryptoDataProc): Boolean; overload; static;
 
-    class function Expand(var SubKey: TBytes; SubKeyLen: NativeUInt;
+    class function Expand(var SubKey; SubKeyLen: NativeUInt;
       const Context: RawByteString; const MasterKey: TCryptoKdfHkdfSha256Key): Boolean; static;
   end;
 
@@ -38,7 +36,7 @@ type
     class function Extract(var MasterKey: TCryptoKdfHkdfSha512Key;
       const Salt: TBytes; const InputKeyingMaterialProc: TCryptoDataProc): Boolean; overload; static;
 
-    class function Expand(var SubKey: TBytes; SubKeyLen: NativeUInt;
+    class function Expand(var SubKey; SubKeyLen: NativeUInt;
       const Context: RawByteString; const MasterKey: TCryptoKdfHkdfSha512Key): Boolean; static;
   end;
 
@@ -56,12 +54,10 @@ begin
   crypto_kdf_keygen(Result);
 end;
 
-class function TCryptoKdf.DeriveFromKey(var SubKey: TBytes;
-  SubKeyLen: NativeUInt; SubKeyId: UInt64;
+class function TCryptoKdf.DeriveFromKey(var SubKey; SubKeyLen: NativeUInt; SubKeyId: UInt64;
   const Context: TCryptoKdfContext; const MasterKey: TCryptoKdfKey): Boolean;
 begin
-  SetLength(SubKey, SubKeyLen);
-  Result := crypto_kdf_derive_from_key(@SubKey[0], SubKeyLen, SubKeyId,
+  Result := crypto_kdf_derive_from_key(@SubKey, SubKeyLen, SubKeyId,
               Context, MasterKey) = 0;
 end;
 
@@ -103,12 +99,10 @@ begin
   Result := crypto_kdf_hkdf_sha256_extract_final(State, MasterKey) = 0;
 end;
 
-class function TCryptoKdfHkdfSha256.Expand(var SubKey: TBytes;
-  SubKeyLen: NativeUInt; const Context: RawByteString;
-  const MasterKey: TCryptoKdfHkdfSha256Key): Boolean;
+class function TCryptoKdfHkdfSha256.Expand(var SubKey; SubKeyLen: NativeUInt;
+  const Context: RawByteString; const MasterKey: TCryptoKdfHkdfSha256Key): Boolean;
 begin
-  SetLength(SubKey, SubKeyLen);
-  Result := crypto_kdf_hkdf_sha256_expand(@SubKey[0], SubKeyLen,
+  Result := crypto_kdf_hkdf_sha256_expand(@SubKey, SubKeyLen,
               @Context[1], Length(Context),
               MasterKey) = 0;
 end;
@@ -151,12 +145,10 @@ begin
   Result := crypto_kdf_hkdf_sha512_extract_final(State, MasterKey) = 0;
 end;
 
-class function TCryptoKdfHkdfSha512.Expand(var SubKey: TBytes;
-  SubKeyLen: NativeUInt; const Context: RawByteString;
-  const MasterKey: TCryptoKdfHkdfSha512Key): Boolean;
+class function TCryptoKdfHkdfSha512.Expand(var SubKey; SubKeyLen: NativeUInt;
+  const Context: RawByteString; const MasterKey: TCryptoKdfHkdfSha512Key): Boolean;
 begin
-  SetLength(SubKey, SubKeyLen);
-  Result := crypto_kdf_hkdf_sha512_expand(@SubKey[0], SubKeyLen,
+  Result := crypto_kdf_hkdf_sha512_expand(@SubKey, SubKeyLen,
               @Context[1], Length(Context),
               MasterKey) = 0;
 end;

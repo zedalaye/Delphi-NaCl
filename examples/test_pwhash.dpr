@@ -46,7 +46,7 @@ procedure test_derive_key(const Password: string; const Salt: TCryptoPwHashSalt)
 var
   Key: TCryptoBoxSeed;
 begin
-  if TCryptoPwHash.DeriveKey(@Key[0], SizeOf(Key), Password, Salt) then
+  if TCryptoPwHash.DeriveKey(Key, SizeOf(Key), Password, Salt) then
   begin
     WriteLn('SUCCESS');
     WriteLn('Key=', THexEncode.FromBytes(Key, SizeOf(Key)));
