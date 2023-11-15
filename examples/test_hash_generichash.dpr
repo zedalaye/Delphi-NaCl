@@ -16,7 +16,7 @@ var
 begin
   var M := TEncoding.UTF8.GetBytes('test');
   if crypto_generichash(@&Out[0], SizeOf(&Out), @M[0], Length(M), nil, 0) = 0 then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(&Out, SizeOf(&Out)), ')')
   else
     WriteLn('FAILED');
 end;
@@ -27,7 +27,7 @@ var
 begin
   var M := TEncoding.UTF8.GetBytes('test');
   if crypto_generichash(@&Out[0], SizeOf(&Out), @M[0], Length(M), @Key[0], SizeOf(Key)) = 0 then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(&Out, SizeOf(&Out)), ')')
   else
     WriteLn('FAILED');
 end;
@@ -38,7 +38,7 @@ var
 begin
   var M := TEncoding.UTF8.GetBytes('test');
   if crypto_generichash(@&Out[0], SizeOf(&Out), @M[0], Length(M), @Key[0], SizeOf(Key)) = 0 then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(&Out, SizeOf(&Out)), ')')
   else
     WriteLn('FAILED');
 end;
@@ -48,7 +48,7 @@ var
   &Out: TCryptoGenericHashHash;
 begin
   if TCryptoGenericHash.Hash(&Out, TEncoding.UTF8.GetBytes('test')) then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(&Out, SizeOf(&Out)), ')')
   else
     WriteLn('FAILED');
 end;
@@ -69,7 +69,7 @@ begin
        end
      )
   then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(&Out, SizeOf(&Out)), ')')
   else
     WriteLn('FAILED');
 end;
@@ -80,7 +80,7 @@ var
   &Out: TCryptoGenericHashHash;
 begin
   if TCryptoGenericHash.Hash(&Out, TEncoding.UTF8.GetBytes('test'), Key) then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(&Out, SizeOf(&Out)), ')')
   else
     WriteLn('FAILED');
 end;
@@ -102,7 +102,7 @@ begin
        Key
      )
   then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(&Out, SizeOf(&Out)), ')')
   else
     WriteLn('FAILED');
 end;
@@ -112,7 +112,7 @@ var
   &Out: TCryptoGenericHashHash;
 begin
   if TCryptoGenericHash.Hash(&Out, TEncoding.UTF8.GetBytes('test'), Key) then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(&Out, SizeOf(&Out)), ')')
   else
     WriteLn('FAILED');
 end;
@@ -134,7 +134,7 @@ begin
        Key
      )
   then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(&Out, SizeOf(&Out)), ')')
   else
     WriteLn('FAILED');
 end;

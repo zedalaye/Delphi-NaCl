@@ -19,7 +19,7 @@ begin
 
   if crypto_auth_hmacsha256(@Hash[0], @Msg[0], Length(Msg), @Key[0]) = 0 then
     if crypto_auth_hmacsha256_verify(@Hash[0], @Msg[0], Length(Msg), @Key[0]) = 0 then
-      WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(Hash, SizeOf(Hash)), ')')
+      WriteLn('SUCCESS (Hash=', TBytes.ToHex(Hash, SizeOf(Hash)), ')')
     else
       WriteLn('FAILED (VERIFY)')
   else
@@ -35,7 +35,7 @@ begin
 
   if TCryptoAuthHmacSha256.Hash(Hash, Msg, Key) then
     if TCryptoAuthHmacSha256.Verify(Hash, Msg, Key) then
-      WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(Hash, SizeOf(Hash)), ')')
+      WriteLn('SUCCESS (Hash=', TBytes.ToHex(Hash, SizeOf(Hash)), ')')
     else
       WriteLn('FAILED (VERIFY)')
   else
@@ -60,7 +60,7 @@ begin
        Key
      )
   then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(Hash, SizeOf(Hash)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(Hash, SizeOf(Hash)), ')')
   else
     WriteLn('FAILED');
 end;

@@ -17,13 +17,13 @@ var
   subkey_3: array[0..63] of Byte;
 begin
   crypto_kdf_hkdf_sha256_expand(@subkey_1[0], Sizeof(subkey_1), PAnsiChar('key for encryption'), Length('key for encryption'), MasterKey);
-  WriteLn('subkey_1=', THexEncode.FromBytes(@subkey_1[0], SizeOf(subkey_1)));
+  WriteLn('subkey_1=', TBytes.ToHex(subkey_1, SizeOf(subkey_1)));
 
   crypto_kdf_hkdf_sha256_expand(@subkey_2[0], Sizeof(subkey_2), PAnsiChar('key for signature'), Length('key for signature'), MasterKey);
-  WriteLn('subkey_2=', THexEncode.FromBytes(@subkey_2[0], SizeOf(subkey_2)));
+  WriteLn('subkey_2=', TBytes.ToHex(subkey_2, SizeOf(subkey_2)));
 
   crypto_kdf_hkdf_sha256_expand(@subkey_3[0], Sizeof(subkey_3), PAnsiChar('key for something else'), Length('key for something else'), MasterKey);
-  WriteLn('subkey_3=', THexEncode.FromBytes(@subkey_3[0], SizeOf(subkey_3)));
+  WriteLn('subkey_3=', TBytes.ToHex(subkey_3, SizeOf(subkey_3)));
 end;
 
 procedure test(const MasterKey: TCryptoKdfHkdfSha256Key);
@@ -37,7 +37,7 @@ begin
   for I := Low(SubKeys) to High(SubKeys) do
   begin
     if TCryptoKdfHkdfSha256.Expand(SubKeys[I], KeyLengths[I], KeyContexts[I], MasterKey) then
-      WriteLn('SubKey', I+1, '=', THexEncode.FromBytes(SubKeys[I]));
+      WriteLn('SubKey', I+1, '=', TBytes.ToHex(SubKeys[I]));
   end;
 end;
 
@@ -48,7 +48,7 @@ begin
   if TCryptoKdfHkdfSha256.Extract(MasterKey, TEncoding.UTF8.GetBytes(Salt), TEncoding.UTF8.GetBytes(IKM)) then
   begin
     WriteLn('SUCCESS');
-    WriteLn('MasterKey=', THexEncode.FromBytes(MasterKey, SizeOf(MasterKey)));
+    WriteLn('MasterKey=', TBytes.ToHex(MasterKey, SizeOf(MasterKey)));
   end
   else
     WriteLn('FAILED');
@@ -77,7 +77,7 @@ begin
   then
   begin
     WriteLn('SUCCESS');
-    WriteLn('MasterKey=', THexEncode.FromBytes(MasterKey, SizeOf(MasterKey)));
+    WriteLn('MasterKey=', TBytes.ToHex(MasterKey, SizeOf(MasterKey)));
   end
   else
     WriteLn('FAILED');

@@ -18,7 +18,7 @@ begin
 
   if crypto_onetimeauth(@&out[0], @M[0], Length(M), @key[0]) = 0 then
   begin
-    WriteLn('crypto_onetimeauth() => ', THexEncode.FromBytes(@&out[0], SizeOf(&out)));
+    WriteLn('crypto_onetimeauth() => ', TBytes.ToHex(&out, SizeOf(&out)));
 
     if crypto_onetimeauth_verify(@&out[0], @M[0], Length(M), @key[0]) = 0 then
       WriteLn('crypto_onetimeauth_verify() => SUCCESS')
@@ -37,7 +37,7 @@ begin
     if TCryptoOnetimeAuth.Verify(Tag, TEncoding.UTF8.GetBytes('Data to authenticate'), Key) then
     begin
       WriteLn('SUCCESS');
-      WriteLn('Tag=', THexEncode.FromBytes(Tag, SizeOf(Tag)));
+      WriteLn('Tag=', TBytes.ToHex(Tag, SizeOf(Tag)));
     end
     else
       WriteLn('FAILED');
@@ -73,7 +73,7 @@ begin
     then
     begin
       WriteLn('SUCCESS');
-      WriteLn('Tag=', THexEncode.FromBytes(Tag, SizeOf(Tag)));
+      WriteLn('Tag=', TBytes.ToHex(Tag, SizeOf(Tag)));
     end
     else
       WriteLn('FAILED');

@@ -23,7 +23,7 @@ begin
 
   crypto_sign(@signed_message[0], signed_message_len, @M[0], Length(M), @SecretKey[0]);
 
-  WriteLn('crypto_sign() => ', THexEncode.FromBytes(@signed_message[0], signed_message_len));
+  WriteLn('crypto_sign() => ', TBytes.ToHex(signed_message));
 
   var unsigned_message: TBytes; var unsigned_message_len: UInt64;
   SetLength(unsigned_message, Length(M));
@@ -36,7 +36,7 @@ begin
   var sig_len: UInt64;
   crypto_sign_detached(@sig[0], sig_len, @M[0], Length(M), @SecretKey[0]);
 
-  WriteLn('crypto_sign_detached() => ', THexEncode.FromBytes(@sig[0], sig_len));
+  WriteLn('crypto_sign_detached() => ', TBytes.ToHex(sig, sig_len));
 
   if crypto_sign_verify_detached(@sig[0], @M[0], Length(M), @PublicKey[0]) <> 0 then
     WriteLn('crypto_sign_verify_detached() => FAILED')
@@ -57,7 +57,7 @@ begin
       if TEncoding.UTF8.GetString(UnsignedBuf) = 'test' then
       begin
         WriteLn('Embedded Signature : SUCCESS');
-        WriteLn('SignedBuf=', THexEncode.FromBytes(SignedBuf));
+        WriteLn('SignedBuf=', TBytes.ToHex(SignedBuf));
       end
       else
         WriteLn('FAILED (Buffers do not match)')
@@ -70,7 +70,7 @@ begin
     if TCryptoSign.VerifyDetached(Signature, TEncoding.UTF8.GetBytes('test'), PublicKey) then
     begin
       WriteLn('Detached Signature : SUCCESS');
-      WriteLn('Signature=', THexEncode.FromBytes(Signature, SizeOf(Signature)));
+      WriteLn('Signature=', TBytes.ToHex(Signature, SizeOf(Signature)));
     end
     else
       WriteLn('FAILED (TCryptoSign.VerifyDetached())')
@@ -86,7 +86,7 @@ begin
   if TCryptoSign.SecretKeyToSeed(Seed, SecretKey) then
   begin
     WriteLn('SecretKeyToSeed : SUCCESS');
-    WriteLn('Seed=', THexEncode.FromBytes(Seed, SizeOf(Seed)));
+    WriteLn('Seed=', TBytes.ToHex(Seed, SizeOf(Seed)));
   end
   else
     WriteLn('FAILED (TCryptoSign.SecretKeyToSeed())');
@@ -96,7 +96,7 @@ begin
     if TBytes.Same<TCryptoSignPublicKey>(TestPK, PublicKey) then
     begin
       WriteLn('SecretKeyToPublicKey : SUCCESS');
-      WriteLn('PublicKey=', THexEncode.FromBytes(TestPK, SizeOf(TestPK)));
+      WriteLn('PublicKey=', TBytes.ToHex(TestPK, SizeOf(TestPK)));
     end
     else
       WriteLn('FAILED (Public Keys do not match)');
@@ -125,7 +125,7 @@ begin
   then
   begin
     WriteLn('SignMultipart : SUCESS');
-    WriteLn('Signature=', THexEncode.FromBytes(Signature, SizeOf(Signature)));
+    WriteLn('Signature=', TBytes.ToHex(Signature, SizeOf(Signature)));
   end;
 
   I := 0;

@@ -9,11 +9,6 @@ uses
   libsodium in '..\lib\libsodium.pas',
   Sodium.Utils in '..\lib\Sodium.Utils.pas';
 
-function check_buffers(B1, B2: TBytes): Boolean;
-begin
-  Result := (Length(B1) = Length(B2)) and (sodium_memcmp(@B1[0], @B2[0], Length(B1)) = 0);
-end;
-
 procedure test(Buf: TBytes; Variant: TBase64Variant; Padding: Boolean);
 const
   VariantName: array[TBase64Variant] of string = ('Original', 'O1', 'O2', 'O3', 'UrlSafe');
@@ -24,10 +19,10 @@ var
 begin
   Write('test (Variant=', VariantName[Variant], ', ', PaddingName[Padding], ')');
 
-  B64 := TBase64Encode.FromBytes(Buf, Variant, Padding);
+  B64 := TBytes.ToBase64(Buf, Variant, Padding);
 //  Insert('!', B64, 12); { Corrupt the Base64 string }
-  if TBase64Encode.ToBytes(DecodedBuf, B64, Variant, Padding) then
-    if check_buffers(Buf, DecodedBuf) then
+  if TBytes.FromBase64(DecodedBuf, B64, Variant, Padding) then
+    if TBytes.Same(Buf, DecodedBuf) then
       WriteLn(' => OK')
     else
       WriteLn(' => FAILED (Buffers are not the same)')

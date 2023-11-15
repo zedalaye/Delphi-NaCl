@@ -31,15 +31,15 @@ begin
     Exit;
   end;
 
-  WriteLn('client_pk=', THexEncode.FromBytes(@client_pk[0], SizeOf(client_pk)));
-  WriteLn('client_sk=', THexEncode.FromBytes(@client_sk[0], SizeOf(client_sk)));
-  WriteLn('client_rx=', THexEncode.FromBytes(@client_rx[0], SizeOf(client_rx)));
-  WriteLn('client_tx=', THexEncode.FromBytes(@client_tx[0], SizeOf(client_tx)));
+  WriteLn('client_pk=', TBytes.ToHex(client_pk, SizeOf(client_pk)));
+  WriteLn('client_sk=', TBytes.ToHex(client_sk, SizeOf(client_sk)));
+  WriteLn('client_rx=', TBytes.ToHex(client_rx, SizeOf(client_rx)));
+  WriteLn('client_tx=', TBytes.ToHex(client_tx, SizeOf(client_tx)));
 
-  WriteLn('server_pk=', THexEncode.FromBytes(@server_pk[0], SizeOf(server_pk)));
-  WriteLn('server_sk=', THexEncode.FromBytes(@server_sk[0], SizeOf(server_sk)));
-  WriteLn('server_rx=', THexEncode.FromBytes(@server_rx[0], SizeOf(server_rx)));
-  WriteLn('server_tx=', THexEncode.FromBytes(@server_tx[0], SizeOf(server_tx)));
+  WriteLn('server_pk=', TBytes.ToHex(server_pk, SizeOf(server_pk)));
+  WriteLn('server_sk=', TBytes.ToHex(server_sk, SizeOf(server_sk)));
+  WriteLn('server_rx=', TBytes.ToHex(server_rx, SizeOf(server_rx)));
+  WriteLn('server_tx=', TBytes.ToHex(server_tx, SizeOf(server_tx)));
 end;
 
 procedure test(ClientPk: TCryptoKxPublicKey; ClientSk: TCryptoKxSecretKey;
@@ -56,15 +56,15 @@ begin
     begin
       WriteLn('SUCCESS');
 
-      WriteLn('ClientPk=', THexEncode.FromBytes(@ClientPk[0], SizeOf(ClientPk)));
-      WriteLn('ClientSk=', THexEncode.FromBytes(@ClientSk[0], SizeOf(ClientSk)));
-      WriteLn('ClientRx=', THexEncode.FromBytes(@ClientRx[0], SizeOf(ClientRx)));
-      WriteLn('ClientTx=', THexEncode.FromBytes(@ClientTx[0], SizeOf(ClientTx)));
+      WriteLn('ClientPk=', TBytes.ToHex(ClientPk, SizeOf(ClientPk)));
+      WriteLn('ClientSk=', TBytes.ToHex(ClientSk, SizeOf(ClientSk)));
+      WriteLn('ClientRx=', TBytes.ToHex(ClientRx, SizeOf(ClientRx)));
+      WriteLn('ClientTx=', TBytes.ToHex(ClientTx, SizeOf(ClientTx)));
 
-      WriteLn('ServerPk=', THexEncode.FromBytes(@ServerPk[0], SizeOf(ServerPk)));
-      WriteLn('ServerSk=', THexEncode.FromBytes(@ServerSk[0], SizeOf(ServerSk)));
-      WriteLn('ServerRx=', THexEncode.FromBytes(@ServerRx[0], SizeOf(ServerRx)));
-      WriteLn('ServerTx=', THexEncode.FromBytes(@ServerTx[0], SizeOf(ServerTx)));
+      WriteLn('ServerPk=', TBytes.ToHex(ServerPk, SizeOf(ServerPk)));
+      WriteLn('ServerSk=', TBytes.ToHex(ServerSk, SizeOf(ServerSk)));
+      WriteLn('ServerRx=', TBytes.ToHex(ServerRx, SizeOf(ServerRx)));
+      WriteLn('ServerTx=', TBytes.ToHex(ServerTx, SizeOf(ServerTx)));
     end
     else
       WriteLn('FAILED (SERVER SESSION KEYS)')

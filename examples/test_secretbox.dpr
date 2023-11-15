@@ -37,7 +37,7 @@ begin
       if TEncoding.UTF8.GetString(ClearBuf) = 'test' then
       begin
         WriteLn('SUCCESS');
-        WriteLn('CipheredData=', THexEncode.FromBytes(CipherBuf));
+        WriteLn('CipheredData=', TBytes.ToHex(CipherBuf));
       end
       else
         WriteLn('FAILED (Buffers do not match)');
@@ -59,8 +59,8 @@ begin
       if TEncoding.UTF8.GetString(ClearBuf) = 'test' then
       begin
         WriteLn('SUCCESS');
-        WriteLn('AuthenticationTag=', THexEncode.FromBytes(Mac, SizeOf(Mac)));
-        WriteLn('CipheredData=', THexEncode.FromBytes(CipherBuf));
+        WriteLn('AuthenticationTag=', TBytes.ToHex(Mac, SizeOf(Mac)));
+        WriteLn('CipheredData=', TBytes.ToHex(CipherBuf));
       end
       else
         WriteLn('FAILED (Buffers do not match)');

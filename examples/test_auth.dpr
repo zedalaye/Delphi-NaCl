@@ -19,7 +19,7 @@ begin
 
   if crypto_auth(@Hash[0], @Msg[0], Length(Msg), @Key[0]) = 0 then
     if crypto_auth_verify(@Hash[0], @Msg[0], Length(Msg), @Key[0]) = 0 then
-      WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(Hash, SizeOf(Hash)), ')')
+      WriteLn('SUCCESS (Hash=', TBytes.ToHex(Hash, SizeOf(Hash)), ')')
     else
       WriteLn('FAILED (VERIFY)')
   else
@@ -35,7 +35,7 @@ begin
 
   if TCryptoAuth.Hash(Hash, Msg, Key) then
     if TCryptoAuth.Verify(Hash, Msg, Key) then
-      WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(Hash, SizeOf(Hash)), ')')
+      WriteLn('SUCCESS (Hash=', TBytes.ToHex(Hash, SizeOf(Hash)), ')')
     else
       WriteLn('FAILED (VERIFY)')
   else

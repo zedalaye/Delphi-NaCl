@@ -19,16 +19,16 @@ var
 begin
   Move(Context[1], Ctx[0], Length(Context));
 
-  WriteLn('master_key=', THexEncode.FromBytes(MasterKey, SizeOf(MasterKey)));
+  WriteLn('master_key=', TBytes.ToHex(MasterKey, SizeOf(MasterKey)));
 
   crypto_kdf_derive_from_key(@subkey_1[0], SizeOf(subkey_1), 1, Ctx, MasterKey);
-  WriteLn('subkey_1=',   THexEncode.FromBytes(@subkey_1[0], SizeOf(subkey_1)));
+  WriteLn('subkey_1=',   TBytes.ToHex(subkey_1, SizeOf(subkey_1)));
 
   crypto_kdf_derive_from_key(@subkey_2[0], SizeOf(subkey_2), 2, Ctx, MasterKey);
-  WriteLn('subkey_2=',   THexEncode.FromBytes(@subkey_2[0], SizeOf(subkey_2)));
+  WriteLn('subkey_2=',   TBytes.ToHex(subkey_2, SizeOf(subkey_2)));
 
   crypto_kdf_derive_from_key(@subkey_3[0], SizeOf(subkey_3), 3, Ctx, MasterKey);
-  WriteLn('subkey_3=',   THexEncode.FromBytes(@subkey_3[0], SizeOf(subkey_3)));
+  WriteLn('subkey_3=',   TBytes.ToHex(subkey_3, SizeOf(subkey_3)));
 end;
 
 procedure test(const MasterKey: TCryptoKdfKey; Context: TCryptoKdfContext);
@@ -47,7 +47,7 @@ begin
 
   WriteLn('SUCCESS');
   for I := Low(SubKeys) to High(SubKeys) do
-    WriteLn('SubKey', I+1, '=', THexEncode.FromBytes(SubKeys[I]));
+    WriteLn('SubKey', I+1, '=', TBytes.ToHex(SubKeys[I]));
 end;
 
 var

@@ -22,12 +22,12 @@ begin
   begin
     SetLength(PaddedBuffer, PaddedBufferLen);
     WriteLn('SUCCESS');
-    WriteLn('Padded Buffer=', THexEncode.FromBytes(PaddedBuffer));
+    WriteLn('Padded Buffer=', TBytes.ToHex(PaddedBuffer));
 
     if sodium_unpad(UnpaddedBufferLen, @PaddedBuffer[0], Length(PaddedBuffer), 16) = 0 then
     begin
       SetLength(PaddedBuffer, UnpaddedBufferLen);
-      WriteLn('Unpadded Buffer=', THexEncode.FromBytes(PaddedBuffer));
+      WriteLn('Unpadded Buffer=', TBytes.ToHex(PaddedBuffer));
     end
     else
       WriteLn('FAILED (unpad)');
@@ -46,10 +46,10 @@ begin
   if TBytes.Pad(PaddedBuffer, 16) then
   begin
     WriteLn('SUCCESS');
-    WriteLn('Padded Buffer=', THexEncode.FromBytes(PaddedBuffer));
+    WriteLn('Padded Buffer=', TBytes.ToHex(PaddedBuffer));
 
     if TBytes.Unpad(PaddedBuffer, 16) then
-      WriteLn('Unpadded Buffer=', THexEncode.FromBytes(PaddedBuffer))
+      WriteLn('Unpadded Buffer=', TBytes.ToHex(PaddedBuffer))
     else
       WriteLn('Unpad : FAILED');
   end

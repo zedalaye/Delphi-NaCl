@@ -16,7 +16,7 @@ var
 begin
   var M := TEncoding.UTF8.GetBytes('test');
   if crypto_hash_sha512(@&Out[0], @M[0], Length(M)) = 0 then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(&Out, SizeOf(&Out)), ')')
   else
     WriteLn('FAILED');
 end;
@@ -26,7 +26,7 @@ var
   &Out: TCryptoHashSha512Hash;
 begin
   if TCryptoHash.Sha512(&Out, TEncoding.UTF8.GetBytes('test')) then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(&Out, SizeOf(&Out)), ')')
   else
     WriteLn('FAILED');
 end;
@@ -47,7 +47,7 @@ begin
        end
      )
   then
-    WriteLn('SUCCESS (Hash=', THexEncode.FromBytes(&Out, SizeOf(&Out)), ')')
+    WriteLn('SUCCESS (Hash=', TBytes.ToHex(&Out, SizeOf(&Out)), ')')
   else
     WriteLn('FAILED');
 end;

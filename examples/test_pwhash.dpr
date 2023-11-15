@@ -24,7 +24,7 @@ begin
                    _CRYPTO_PWHASH_ALG_DEFAULT) <> 0 then
     WriteLn('crypto_pwhash() => FAILED')
   else
-    WriteLn('crypto_pwhash() => SUCCESS key = ', THexEncode.FromBytes(@key[0], SizeOf(key)));
+    WriteLn('crypto_pwhash() => SUCCESS key = ', TBytes.ToHex(key, SizeOf(key)));
 
   if crypto_pwhash_str(hashed_password,
                        PAnsiChar(P), Length(P),
@@ -49,7 +49,7 @@ begin
   if TCryptoPwHash.DeriveKey(Key, SizeOf(Key), Password, Salt) then
   begin
     WriteLn('SUCCESS');
-    WriteLn('Key=', THexEncode.FromBytes(Key, SizeOf(Key)));
+    WriteLn('Key=', TBytes.ToHex(Key, SizeOf(Key)));
   end
   else
     WriteLn('FAILED');

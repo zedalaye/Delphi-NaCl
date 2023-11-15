@@ -30,10 +30,8 @@ type
     class function RuntimeHasRdRand: Boolean; static;
   end;
 
-  THexEncode = record
-    class function FromBytes(Buf: PByte; BufLen: NativeUInt): string; overload; static;
-    class function FromBytes(const Buf: TBytes): string; overload; static;
-    class function FromBytes(const Buf; Len: NativeUInt): string; overload; static;
+  TRandom = record
+    class function ImplementationName: string; static;
   end;
 
   TBase64Variant = (
@@ -41,39 +39,67 @@ type
     UrlSafe = SODIUM_BASE64_VARIANT_URLSAFE
   );
 
-  TBase64Encode = record
-  private
-    class function VariantOption(Variant: TBase64Variant; Padding: Boolean): Integer; static;
-  public
-    class function FromBytes(Buf: PByte; BufLen: NativeUInt;
-      Variant: TBase64Variant = TBase64Variant.Original; Padding: Boolean = True): string; overload; static;
-    class function FromBytes(const Buf: TBytes;
-      Variant: TBase64Variant = TBase64Variant.Original; Padding: Boolean = True): string; overload; static;
-    class function FromBytes(const Buf; Len: NativeUInt;
-      Variant: TBase64Variant = TBase64Variant.Original; Padding: Boolean = True): string; overload; static;
-
-    class function ToBytes(var Buf: TBytes; const B64: string;
-      Variant: TBase64Variant = TBase64Variant.Original; Padding: Boolean = True): Boolean; overload; static;
-  end;
-
-  TRandom = record
-    class function ImplementationName: string; static;
-  end;
-
   TBytesHelper = record helper for TBytes
     class procedure SameSize(const A, B: TBytes); static;
 
+    { Buffers <=> TBytes }
     class function FromBuf(const Buf; Len: NativeUInt): TBytes; overload; static;
     class function FromBuf<T>(const Buf: T): TBytes; overload; static;
+
+    class function ToBuf(var Buf; Len: NativeUInt; const B: TBytes): Boolean; overload; static;
+    class function ToBuf<T>(var Buf: T; const B: TBytes): Boolean; overload; static;
+
+    function ToBuf(var Buf; Len: NativeUInt): Boolean; overload;
+    function ToBuf<T>(var Buf: T): Boolean; overload;
+
+    { Buffers <=> Hexadecimal encoded string }
+
+    class function FromHex(Buf: PByte; var Len: NativeUInt; const Hex: string): Boolean; overload; static;
+    class function FromHex(var Buf; Len: NativeUInt; const Hex: string): Boolean; overload; static;
+    class function FromHex<T>(var Buf: T; const Hex: string): Boolean; overload; static;
+    class function FromHex(var Buf: TBytes; const Hex: string): Boolean; overload; static;
+
+    class function ToHex(const Buf; Len: NativeUInt): string; overload; static;
+    class function ToHex<T>(const Buf: T): string; overload; static;
+
+    class function ToHex(const Buf: TBytes): string; overload; static;
+    function ToHex: string; overload;
+
+    { Buffers <=> Base64 encoded string }
+
+    class function FromBase64(Buf: PByte; var Len: NativeUInt; const Base64: string;
+      Variant: TBase64Variant = TBase64Variant.Original; Padding: Boolean = True): Boolean; overload; static;
+    class function FromBase64(var Buf; Len: NativeUInt; const Base64: string;
+      Variant: TBase64Variant = TBase64Variant.Original; Padding: Boolean = True): Boolean; overload; static;
+    class function FromBase64<T>(var Buf: T; const Base64: string;
+      Variant: TBase64Variant = TBase64Variant.Original; Padding: Boolean = True): Boolean; overload; static;
+    class function FromBase64(var Buf: TBytes; const Base64: string;
+      Variant: TBase64Variant = TBase64Variant.Original; Padding: Boolean = True): Boolean; overload; static;
+
+    class function ToBase64(const Buf; Len: NativeUInt;
+      Variant: TBase64Variant = TBase64Variant.Original; Padding: Boolean = True): string; overload; static;
+    class function ToBase64<T>(const Buf: T;
+      Variant: TBase64Variant = TBase64Variant.Original; Padding: Boolean = True): string; overload; static;
+
+    class function ToBase64(const Buf: TBytes;
+      Variant: TBase64Variant = TBase64Variant.Original; Padding: Boolean = True): string; overload; static;
+    function ToBase64(
+      Variant: TBase64Variant = TBase64Variant.Original; Padding: Boolean = True): string; overload;
+
+    { Zeroing Buffers }
 
     class function Zero(Len: NativeUInt): TBytes; overload; static;
     class procedure Zero(var Buf: TBytes); overload; static;
     class procedure Zero(var Buf; Len: NativeUInt); overload; static;
     class procedure Zero<T>(var Buf: T); overload; static;
 
-    class function IsZero(const Buf: TBytes): Boolean; overload; static;
     class function IsZero(const Buf; Len: NativeUInt): Boolean; overload; static;
     class function IsZero<T>(const Buf: T): Boolean; overload; static;
+
+    class function IsZero(const Buf: TBytes): Boolean; overload; static;
+    function IsZero: Boolean; overload;
+
+    { Randomizing Buffers }
 
     class function Random: Cardinal; overload; static;
     class function RandomUniform(UpperBound: Cardinal): Cardinal; static;
@@ -87,9 +113,13 @@ type
     class procedure Random(var Buf; Len: NativeUInt; const Seed: TRandomBytesSeed); overload; static;
     class procedure Random<T>(var Buf: T; const Seed: TRandomBytesSeed); overload; static;
 
+    { Comparing Buffers }
+
     class function Same(const A, B: TBytes): Boolean; overload; static;
     class function Same(const A, B; Len: NativeUInt): Boolean; overload; static;
     class function Same<T>(const A, B: T): Boolean; overload; static;
+
+    { Verifying Buffers }
 
     class function Verify16(const A, B: PByte): Boolean; static;
     class function Verify32(const A, B: PByte): Boolean; static;
@@ -99,8 +129,12 @@ type
     class function Verify(const A, B; Len: NativeUInt): Boolean; overload; static;
     class function Verify<T>(const A, B: T): Boolean; overload; static;
 
+    { Padding Buffers }
+
     class function Pad(var B: TBytes; BlockSize: NativeUInt): Boolean; static;
     class function Unpad(var B: TBytes; BlockSize: NativeUInt): Boolean; static;
+
+    { Arithmetics over big numbers stored in Buffers }
 
     class procedure Inc(var B: TBytes); overload; static;
     class procedure Inc(var B; Len: NativeUInt); overload; static;
@@ -113,6 +147,8 @@ type
     class procedure Sub(var A: TBytes; const B: TBytes); overload; static;
     class procedure Sub(var A; const B; Len: NativeUInt); overload; static;
     class procedure Sub<T>(var A: T; const B: T); overload; static;
+
+    { Compare big numbers stored in Buffers }
 
     class function Compare(const A, B: TBytes): Integer; overload; static;
     class function Compare(const A; const B; Len: NativeUInt): Integer; overload; static;
@@ -132,96 +168,11 @@ begin
     Result := @B[0];
 end;
 
-{ THexEncode }
-
-class function THexEncode.FromBytes(Buf: PByte; BufLen: NativeUInt): string;
-var
-  Hex: TBytes;
-begin
-  SetLength(Hex, BufLen * 2 + 1); // bin2hex adds an ending \0
-  sodium_bin2hex(@Hex[0], Length(Hex), Buf, BufLen);
-  Result := string(PAnsiChar(Hex));
-end;
-
-class function THexEncode.FromBytes(const Buf: TBytes): string;
-begin
-  Result := THexEncode.FromBytes(@Buf[0], Length(Buf));
-end;
-
-class function THexEncode.FromBytes(const Buf; Len: NativeUInt): string;
-begin
-  Result := THexEncode.FromBytes(PByte(@Buf), Len);
-end;
-
 { TRandom }
 
 class function TRandom.ImplementationName: string;
 begin
   Result := string(randombytes_implementation_name);
-end;
-
-{ TBase64Encode }
-
-class function TBase64Encode.VariantOption(Variant: TBase64Variant;
-  Padding: Boolean): Integer;
-const
-  PADDING_OFFSET: array[Boolean] of Integer = (2, 0); { (False, True) }
-begin
-  Result := Ord(Variant) + PADDING_OFFSET[Padding];
-end;
-
-class function TBase64Encode.FromBytes(Buf: PByte; BufLen: NativeUInt;
-  Variant: TBase64Variant; Padding: Boolean): string;
-var
-  V: Integer;
-  B64: AnsiString;
-begin
-  V := VariantOption(Variant, Padding);
-  SetLength(B64, _SODIUM_BASE64_ENCODED_LEN(BufLen, V));
-  sodium_bin2base64(PAnsiChar(B64), Length(B64), Buf, BufLen, V);
-  Result := string(B64);
-end;
-
-class function TBase64Encode.FromBytes(const Buf: TBytes;
-  Variant: TBase64Variant; Padding: Boolean): string;
-begin
-  Result := TBase64Encode.FromBytes(@Buf[0], Length(Buf), Variant, Padding);
-end;
-
-class function TBase64Encode.FromBytes(const Buf; Len: NativeUInt;
-  Variant: TBase64Variant; Padding: Boolean): string;
-begin
-  Result := TBase64Encode.FromBytes(PByte(@Buf), Len, Variant, Padding);
-end;
-
-class function TBase64Encode.ToBytes(var Buf: TBytes; const B64: string;
-  Variant: TBase64Variant; Padding: Boolean): Boolean;
-var
-  V: Integer;
-  BufLen: NativeUInt;
-  B64P, B64Err: PAnsiChar;
-begin
-  V := VariantOption(Variant, Padding);
-
-  SetLength(Buf, Length(B64) div 4 * 3);
-  B64P := PAnsiChar(AnsiString(B64));
-
-  Result := sodium_base642bin(
-    @Buf[0], Length(Buf),
-    B64P, Length(B64),    // base64 strings does not contain extended characters
-    PAnsiChar(' '#13#10), // ignore whitespace and newline characters
-    BufLen,
-    B64Err,
-    V
-  ) = 0;
-
-  if not Result then
-    raise EArgumentException.CreateFmt(
-      'Invalid Base64 string (unexpected char ''%s'' at pos %d)',
-      [B64Err^, Integer(B64Err - B64P) +1]
-    );
-
-  SetLength(Buf, BufLen);
 end;
 
 { TSodium }
@@ -308,6 +259,13 @@ end;
 
 { TBytesHelper }
 
+function VariantOption(Variant: TBase64Variant; Padding: Boolean): Integer; inline;
+const
+  PADDING_OFFSET: array[Boolean] of Integer = (2, 0); { (False, True) }
+begin
+  Result := Ord(Variant) + PADDING_OFFSET[Padding];
+end;
+
 class procedure TBytesHelper.SameSize(const A, B: TBytes);
 begin
   if Length(A) <> Length(B) then
@@ -326,6 +284,233 @@ begin
   Move(Buf, Result[0], SizeOf(T));
 end;
 
+class function TBytesHelper.ToBuf(var Buf; Len: NativeUInt;
+  const B: TBytes): Boolean;
+begin
+  if NativeUInt(Length(B)) = Len then
+  begin
+    Move(B[0], Buf, Len);
+    Result := True;
+  end
+  else
+    Result := False;
+end;
+
+class function TBytesHelper.ToBuf<T>(var Buf: T; const B: TBytes): Boolean;
+begin
+  if Length(B) = SizeOf(T) then
+  begin
+    Move(B[0], Buf, Sizeof(T));
+    Result := True;
+  end
+  else
+    Result := False;
+end;
+
+function TBytesHelper.ToBuf(var Buf; Len: NativeUInt): Boolean;
+begin
+  Result := TBytes.ToBuf(Buf, Len, Self);
+end;
+
+function TBytesHelper.ToBuf<T>(var Buf: T): Boolean;
+begin
+  Result := TBytes.ToBuf(Buf, Self);
+end;
+
+class function TBytesHelper.FromHex(Buf: PByte; var Len: NativeUInt;
+  const Hex: string): Boolean;
+const
+  HEX_CHARSET = ['0'..'9', 'a'..'f', 'A'..'F'];
+var
+  HexR: RawByteString;
+  HexP, HexErr: PAnsiChar;
+begin
+  HexR := RawByteString(Hex);
+  HexP := PAnsiChar(HexR);
+
+  Result := sodium_hex2bin(
+              Buf, Len,
+              HexP, Length(HexR),    // hex strings does not contain extended characters
+              PAnsiChar(' '#13#10), // ignore whitespace and newline characters
+              Len,
+              HexErr
+            ) = 0;
+
+  if not Result then
+  begin
+    if CharInSet(HexErr^, HEX_CHARSET) then
+      raise EArgumentException.Create('Provided Buffer is too small')
+    else
+      raise EArgumentException.CreateFmt(
+        'Invalid Hexadecimal string (unexpected char ''%s'' at pos %d)',
+        [HexErr^, Integer(HexErr - HexP) +1]
+      );
+  end;
+end;
+
+class function TBytesHelper.FromHex(var Buf; Len: NativeUInt;
+  const Hex: string): Boolean;
+var
+  BufLen: NativeUInt;
+begin
+  BufLen := Len;
+  Result := FromHex(@Buf, BufLen, Hex);
+  if Result and (Len > BufLen) then
+    raise EArgumentException.CreateFmt(
+      'Provided Buffer (%d bytes) is too big (expected: %d bytes)',
+      [Len, BufLen]
+    );
+end;
+
+class function TBytesHelper.FromHex<T>(var Buf: T; const Hex: string): Boolean;
+begin
+  Result := FromHex(Buf, SizeOf(T), Hex);
+end;
+
+class function TBytesHelper.FromHex(var Buf: TBytes; const Hex: string): Boolean;
+var
+  BufLen: NativeUInt;
+begin
+  BufLen := Length(Hex) div 2;
+  SetLength(Buf, BufLen);
+  Result := FromHex(@Buf[0], BufLen, Hex);
+  if Result then
+    SetLength(Buf, BufLen);
+end;
+
+class function TBytesHelper.ToHex(const Buf; Len: NativeUInt): string;
+var
+  Hex: RawByteString;
+begin
+  SetLength(Hex, Len * 2 + 1); // bin2hex adds an ending \0
+  sodium_bin2hex(@Hex[1], Length(Hex), @Buf, Len);
+  Result := string(Hex);
+end;
+
+class function TBytesHelper.ToHex<T>(const Buf: T): string;
+begin
+  Result := ToHex(Buf, SizeOf(T));
+end;
+
+class function TBytesHelper.ToHex(const Buf: TBytes): string;
+begin
+  Result := ToHex(Buf[0], Length(Buf));
+end;
+
+function TBytesHelper.ToHex: string;
+begin
+  Result := TBytes.ToHex(Self);
+end;
+
+class function TBytesHelper.FromBase64(Buf: PByte; var Len: NativeUInt;
+  const Base64: string; Variant: TBase64Variant; Padding: Boolean): Boolean;
+
+  function VariantCharset(Variant: TBase64Variant; Padding: Boolean): TSysCharSet;
+  const
+    BASE64_CHARSET   = ['a'..'z', 'A'..'Z', '0'..'9'];
+    ORIGINAL_CHARSET = ['+', '/'];
+    URLSAFE_CHARSET  = ['-', '_'];
+    PADDING_CHARSET  = ['='];
+  begin
+    Result := BASE64_CHARSET;
+    if Variant = TBase64Variant.UrlSafe then
+      Result := Result + URLSAFE_CHARSET
+    else
+      Result := Result + ORIGINAL_CHARSET;
+    if Padding then
+      Result := Result + PADDING_CHARSET;
+  end;
+
+var
+  B64R: RawByteString;
+  B64P, B64Err: PAnsiChar;
+begin
+  B64R := RawByteString(Base64);
+  B64P := PAnsiChar(B64R);
+
+  Result := sodium_base642bin(
+              Buf, Len,
+              B64P, Length(B64R),    // base64 strings does not contain extended characters
+              PAnsiChar(' '#13#10), // ignore whitespace and newline characters
+              Len,
+              B64Err,
+              VariantOption(Variant, Padding)
+            ) = 0;
+
+  if not Result then
+  begin
+    if CharInSet(B64Err^, VariantCharset(Variant, Padding)) then
+      raise EArgumentException.Create('Provided Buffer is too small')
+    else
+      raise EArgumentException.CreateFmt(
+        'Invalid Base64 string (unexpected char ''%s'' at pos %d)',
+        [B64Err^, Integer(B64Err - B64P) +1]
+      );
+  end;
+end;
+
+class function TBytesHelper.FromBase64(var Buf; Len: NativeUInt;
+  const Base64: string; Variant: TBase64Variant; Padding: Boolean): Boolean;
+var
+  BufLen: NativeUInt;
+begin
+  BufLen := Len;
+  Result := FromBase64(@Buf, BufLen, Base64, Variant, Padding);
+  if Result and (Len > BufLen) then
+    raise EArgumentException.CreateFmt(
+      'Provided Buffer (%d bytes) is too big (expected: %d bytes)',
+      [Len, BufLen]
+    );
+end;
+
+class function TBytesHelper.FromBase64<T>(var Buf: T; const Base64: string;
+  Variant: TBase64Variant; Padding: Boolean): Boolean;
+begin
+  Result := FromBase64(Buf, SizeOf(T), Base64, Variant, Padding);
+end;
+
+class function TBytesHelper.FromBase64(var Buf: TBytes; const Base64: string;
+  Variant: TBase64Variant; Padding: Boolean): Boolean;
+var
+  BufLen: NativeUInt;
+begin
+  BufLen := Length(Base64) div 4 * 3;
+  SetLength(Buf, BufLen);
+  Result := FromBase64(@Buf[0], BufLen, Base64, Variant, Padding);
+  if Result then
+    SetLength(Buf, BufLen);
+end;
+
+class function TBytesHelper.ToBase64(const Buf; Len: NativeUInt;
+  Variant: TBase64Variant; Padding: Boolean): string;
+var
+  V: Integer;
+  B64: RawByteString;
+begin
+  V := VariantOption(Variant, Padding);
+  SetLength(B64, _SODIUM_BASE64_ENCODED_LEN(Len, V));
+  sodium_bin2base64(@B64[1], Length(B64), @Buf, Len, V);
+  Result := string(B64);
+end;
+
+class function TBytesHelper.ToBase64<T>(const Buf: T; Variant: TBase64Variant;
+  Padding: Boolean): string;
+begin
+  Result := ToBase64(Buf, SizeOf(T), Variant, Padding);
+end;
+
+class function TBytesHelper.ToBase64(const Buf: TBytes; Variant: TBase64Variant;
+  Padding: Boolean): string;
+begin
+  Result := ToBase64(Buf[0], Length(Buf), Variant, Padding);
+end;
+
+function TBytesHelper.ToBase64(Variant: TBase64Variant;
+  Padding: Boolean): string;
+begin
+  Result := TBytes.ToBase64(Self, Variant, Padding);
+end;
+
 class function TBytesHelper.IsZero(const Buf; Len: NativeUInt): Boolean;
 begin
   Result := sodium_is_zero(@Buf, Len) = 1; // !
@@ -334,6 +519,11 @@ end;
 class function TBytesHelper.IsZero(const Buf: TBytes): Boolean;
 begin
   Result := sodium_is_zero(@Buf[0], Length(Buf)) = 1; // !
+end;
+
+function TBytesHelper.IsZero: Boolean;
+begin
+  Result := TBytes.IsZero(Self);
 end;
 
 class function TBytesHelper.IsZero<T>(const Buf: T): Boolean;

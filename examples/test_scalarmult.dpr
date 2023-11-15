@@ -36,7 +36,7 @@ begin
     Exit;
   end;
 
-  WriteLn('crypto_scalarmult(q_by_client) = ', THexEncode.FromBytes(@scalarmult_q_by_client[0], SizeOf(scalarmult_q_by_client)));
+  WriteLn('crypto_scalarmult(q_by_client) = ', TBytes.ToHex(scalarmult_q_by_client, SizeOf(scalarmult_q_by_client)));
 
   crypto_generichash_init(h, nil, 0, SizeOf(sharedkey_by_client));
   crypto_generichash_update(h, @scalarmult_q_by_client[0], SizeOf(scalarmult_q_by_client));
@@ -44,7 +44,7 @@ begin
   crypto_generichash_update(h, @server_pk[0], SizeOf(server_pk));
   crypto_generichash_final(h, @sharedkey_by_client[0], SizeOf(sharedkey_by_client));
 
-  WriteLn('sharedkey_by_client = ', THexEncode.FromBytes(@sharedkey_by_client[0], SizeOf(sharedkey_by_client)));
+  WriteLn('sharedkey_by_client = ', TBytes.ToHex(sharedkey_by_client, SizeOf(sharedkey_by_client)));
 
   (* The server derives a shared key from its secret key and the client's public key *)
   (* shared key = h(q ‖ client_publickey ‖ server_publickey) *)
@@ -53,13 +53,13 @@ begin
     WriteLn('crypto_scalarmult(q_by_server) => FAILED');
     Exit;
   end;
-  WriteLn('crypto_scalarmult(q_by_server) = ', THexEncode.FromBytes(@scalarmult_q_by_server[0], SizeOf(scalarmult_q_by_server)));
+  WriteLn('crypto_scalarmult(q_by_server) = ', TBytes.ToHex(scalarmult_q_by_server, SizeOf(scalarmult_q_by_server)));
   crypto_generichash_init(h, nil, 0, SizeOf(sharedkey_by_server));
   crypto_generichash_update(h, @scalarmult_q_by_server[0], SizeOf(scalarmult_q_by_server));
   crypto_generichash_update(h, @client_pk[0], SizeOf(client_pk));
   crypto_generichash_update(h, @server_pk[0], SizeOf(server_pk));
   crypto_generichash_final(h, @sharedkey_by_server[0], SizeOf(sharedkey_by_server));
-  WriteLn('sharedkey_by_server = ', THexEncode.FromBytes(@sharedkey_by_server[0], SizeOf(sharedkey_by_server)));
+  WriteLn('sharedkey_by_server = ', TBytes.ToHex(sharedkey_by_server, SizeOf(sharedkey_by_server)));
   (* sharedkey_by_client and sharedkey_by_server are identical *)
 
   if sodium_memcmp(@sharedkey_by_client[0], @sharedkey_by_server[0], SizeOf(TCryptoGenericHashHash)) <> 0 then
@@ -87,7 +87,7 @@ begin
     if TCryptoScalarMult.Compute(ScalarmultQByClient, ClientSecretKey, ServerPublicKey) then
     begin
       WriteLn('SUCCESS');
-      WriteLn('Q By Client = ', THexEncode.FromBytes(ScalarmultQByClient, SizeOf(ScalarmultQByClient)));
+      WriteLn('Q By Client = ', TBytes.ToHex(ScalarmultQByClient, SizeOf(ScalarmultQByClient)));
 
       var I := 0;
       TCryptoGenericHash.Hash(
@@ -104,7 +104,7 @@ begin
         end
       );
 
-      WriteLn('SharedKeyByClient=', THexEncode.FromBytes(SharedKeyByClient, SizeOf(SharedKeyByClient)));
+      WriteLn('SharedKeyByClient=', TBytes.ToHex(SharedKeyByClient, SizeOf(SharedKeyByClient)));
     end
     else
       WriteLn('FAILED (TCryptoScalarMult.Compute)')
@@ -132,7 +132,7 @@ begin
     if TCryptoScalarMult.Compute(ScalarmultQByServer, ServerSecretKey, ClientPublicKey) then
     begin
       WriteLn('SUCCESS');
-      WriteLn('Q By Server = ', THexEncode.FromBytes(ScalarmultQByServer, SizeOf(ScalarmultQByServer)));
+      WriteLn('Q By Server = ', TBytes.ToHex(ScalarmultQByServer, SizeOf(ScalarmultQByServer)));
 
       var I := 0;
       TCryptoGenericHash.Hash(
@@ -149,7 +149,7 @@ begin
         end
       );
 
-      WriteLn('SharedKeyByServer=', THexEncode.FromBytes(SharedKeyByServer, SizeOf(SharedKeyByServer)));
+      WriteLn('SharedKeyByServer=', TBytes.ToHex(SharedKeyByServer, SizeOf(SharedKeyByServer)));
     end
     else
       WriteLn('FAILED (TCryptoScalarMult.Compute)')

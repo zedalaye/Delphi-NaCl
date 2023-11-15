@@ -17,7 +17,7 @@ begin
   var ShortData := TEncoding.UTF8.GetBytes('Sparkling water');
 
   if crypto_shorthash(@hash[0], @ShortData[0], Length(ShortData), @key[0]) = 0 then
-    WriteLn('crypto_shorthash() = ', THexEncode.FromBytes(@hash[0], SizeOf(hash)))
+    WriteLn('crypto_shorthash() = ', TBytes.ToHex(hash, SizeOf(hash)))
   else
     WriteLn('crypto_shorthash() => FAILED');
 end;
@@ -29,7 +29,7 @@ begin
   if TCryptoShortHash.Generate(Hash, TEncoding.UTF8.GetBytes('Sparkling water'), Key) then
   begin
     WriteLn('SUCCESS');
-    WriteLn('Hash=', THexEncode.FromBytes(Hash, SizeOf(Hash)));
+    WriteLn('Hash=', TBytes.ToHex(Hash, SizeOf(Hash)));
   end
   else
     WriteLn('FAILED');
