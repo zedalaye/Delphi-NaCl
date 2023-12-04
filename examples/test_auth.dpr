@@ -6,10 +6,13 @@ program test_auth;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.Auth in '..\lib\Sodium.Auth.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.Auth,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(Key: TCryptoAuthKey);
 var
   Msg: TBytes;
@@ -25,6 +28,7 @@ begin
   else
     WriteLn('FAILED');
 end;
+{$endif}
 
 procedure test(Key: TCryptoAuthKey);
 var
@@ -49,8 +53,10 @@ begin
   try
     Key := TCryptoAuth.Keygen;
 
-	WriteLn('TCryptoAuth.Primitive=', TCryptoAuth.Primitive);
+  	WriteLn('TCryptoAuth.Primitive=', TCryptoAuth.Primitive);
+  {$if defined(API)}
     Write('API...'); test_api(Key);
+  {$endif}
     Write('Wrapper...'); test(Key);
 
     ReadLn;

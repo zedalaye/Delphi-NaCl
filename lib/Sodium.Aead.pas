@@ -7,6 +7,9 @@ uses
   libsodium, Sodium.Utils;
 
 type
+  TCryptoAeadAegis128lKey = libsodium.TCryptoAeadAegis128lKey;
+  TCryptoAeadAegis128lPubBytes = libsodium.TCryptoAeadAegis128lPubBytes;
+
   TCryptoAeadAegis128l = record
     class function Keygen: TCryptoAeadAegis128lKey; static;
 
@@ -20,6 +23,9 @@ type
                            const Nonce: TCryptoAeadAegis128lPubBytes;
                            const Key: TCryptoAeadAegis128lKey): Boolean; overload; static;
   end;
+
+  TCryptoAeadAegis256Key = libsodium.TCryptoAeadAegis256Key;
+  TCryptoAeadAegis256PubBytes = libsodium.TCryptoAeadAegis256PubBytes;
 
   TCryptoAeadAegis256 = record
     class function Keygen: TCryptoAeadAegis256Key; static;
@@ -35,6 +41,9 @@ type
                            const Key: TCryptoAeadAegis256Key): Boolean; overload; static;
   end;
 
+  TCryptoAeadChacha20poly1305IetfKey = libsodium.TCryptoAeadChacha20poly1305IetfKey;
+  TCryptoAeadChacha20poly1305IetfPubBytes = libsodium.TCryptoAeadChacha20poly1305IetfPubBytes;
+
   TCryptoAeadChacha20poly1305Ietf = record
     class function Keygen: TCryptoAeadChacha20poly1305IetfKey; static;
 
@@ -49,6 +58,9 @@ type
                            const Key: TCryptoAeadChacha20poly1305IetfKey): Boolean; overload; static;
   end;
 
+  TCryptoAeadChacha20poly1305Key = libsodium.TCryptoAeadChacha20poly1305Key;
+  TCryptoAeadChacha20poly1305PubBytes = libsodium.TCryptoAeadChacha20poly1305PubBytes;
+
   TCryptoAeadChacha20poly1305 = record
     class function Keygen: TCryptoAeadChacha20poly1305Key; static;
 
@@ -62,6 +74,9 @@ type
                            const Nonce: TCryptoAeadChacha20poly1305PubBytes;
                            const Key: TCryptoAeadChacha20poly1305Key): Boolean; overload; static;
   end;
+
+  TCryptoAeadXChacha20poly1305IetfKey= libsodium.TCryptoAeadXChacha20poly1305IetfKey;
+  TCryptoAeadXChacha20poly1305IetfPubBytes = libsodium.TCryptoAeadXChacha20poly1305IetfPubBytes;
 
   TCryptoAeadXChacha20poly1305Ietf = record
     class function Keygen: TCryptoAeadXChacha20poly1305IetfKey; static;

@@ -7,6 +7,10 @@ uses
   libsodium, Sodium.Utils;
 
 type
+  TCryptoSecretBoxKey   = libsodium.TCryptoSecretBoxKey;
+  TCryptoSecretBoxNonce = libsodium.TCryptoSecretBoxNonce;
+  TCryptoSecretBoxMac   = libsodium.TCryptoSecretBoxMac;
+
   TCryptoSecretBox = record
     class function Primitive: string; static;
 

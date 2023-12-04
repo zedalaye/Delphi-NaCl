@@ -6,11 +6,15 @@
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.ScalarMult in '..\lib\Sodium.ScalarMult.pas',
-  Sodium.Hash in '..\lib\Sodium.Hash.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.ScalarMult,
+  Sodium.Box,
+  Sodium.Hash,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(const ClientSecretKey, ServerSecretKey: TCryptoBoxSecretKey);
 var
   client_pk: TCryptoBoxPublicKey;
@@ -67,6 +71,7 @@ begin
   else
     WriteLn('crypto_scalarmult() generation of shared key => SUCCESS')
 end;
+{$endif}
 
 procedure test_client(const ClientSecretKey, ServerSecretKey: TCryptoBoxSecretKey);
 var
@@ -168,7 +173,9 @@ begin
     TBytes.Random(ServerSecretKey, SizeOf(ServerSecretKey));
 
     WriteLn('TCryptoScalarMult.Primirive=', TCryptoScalarMult.Primitive);
+  {$if defined(API)}
     Write('API...'); test_api(ClientSecretKey, ServerSecretKey);
+  {$endif}
     Write('Wrapper (CLIENT)...'); test_client(ClientSecretKey, ServerSecretKey);
     Write('Wrapper (SERVER)...'); test_server(ClientSecretKey, ServerSecretKey);
 

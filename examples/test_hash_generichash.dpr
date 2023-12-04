@@ -6,10 +6,13 @@ program test_hash_generichash;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.Hash in '..\lib\Sodium.Hash.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.Hash,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api_no_key;
 var
   &Out: TCryptoGenericHashHash;
@@ -42,6 +45,7 @@ begin
   else
     WriteLn('FAILED');
 end;
+{$endif}
 
 procedure test_no_key;
 var
@@ -147,17 +151,23 @@ begin
   try
     WriteLn('GenericHash.Primitive=', TCryptoGenericHash.Primitive);
 
+  {$if defined(API)}
     Write('API (NO_KEY)...'); test_api_no_key;
+  {$endif}
     Write('Wrapper (NO_KEY)...'); test_no_key;
     Write('Wrapper (NO_KEY, MULTIPLE BLOCKS)...'); test_no_key_multiple_blocks;
 
     Key := TCryptoGenericHash.Keygen;
+  {$if defined(API)}
     Write('API...'); test_api(Key);
+  {$endif}
     Write('Wrapper...'); test(Key);
     Write('Wrapper (MULTIPLE BLOCKS)...'); test_multiple_blocks(Key);
 
     BigKey := TCryptoGenericHash.Keygen(_CRYPTO_GENERICHASH_KEYBYTES_MAX);
+  {$if defined(API)}
     Write('API (BIG_KEY)...'); test_api_big_key(BigKey);
+  {$endif}
     Write('Wrapper (BIG_KEY)...'); test_big_key(BigKey);
     Write('Wrapper (BIG_KEY, MULTIPLE BLOCKS)...'); test_big_key_multiple_blocks(BigKey);
 

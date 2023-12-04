@@ -97,10 +97,6 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="..\lib\libsodium.pas"/>
-        <DCCReference Include="..\lib\Sodium.Utils.pas"/>
-        <DCCReference Include="..\lib\Sodium.ScalarMult.pas"/>
-        <DCCReference Include="..\lib\Sodium.Hash.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

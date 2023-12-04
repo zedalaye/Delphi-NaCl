@@ -7,6 +7,9 @@ uses
   libsodium, Sodium.Utils;
 
 type
+  TCryptoOnetimeAuthKey = libsodium.TCryptoOnetimeAuthKey;
+  TCryptoOnetimeAuthTag = libsodium.TCryptoOnetimeAuthTag;
+
   TCryptoOnetimeAuth = record
     class function Primitive: string; static;
 

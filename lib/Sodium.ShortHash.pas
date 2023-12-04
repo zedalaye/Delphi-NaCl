@@ -7,6 +7,9 @@ uses
   libsodium, Sodium.Utils;
 
 type
+  TCryptoShortHashKey  = libsodium.TCryptoShortHashKey;
+  TCryptoShortHashHash = libsodium.TCryptoShortHashHash;
+
   TCryptoShortHash = record
     class function Primitive: string; static;
 

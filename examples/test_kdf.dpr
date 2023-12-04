@@ -6,10 +6,13 @@ program test_kdf;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.Kdf in '..\lib\Sodium.Kdf.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.Kdf,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(const MasterKey: TCryptoKdfKey; const Context: RawByteString);
 var
   Ctx: TCryptoKdfContext;
@@ -30,6 +33,7 @@ begin
   crypto_kdf_derive_from_key(@subkey_3[0], SizeOf(subkey_3), 3, Ctx, MasterKey);
   WriteLn('subkey_3=',   TBytes.ToHex(subkey_3, SizeOf(subkey_3)));
 end;
+{$endif}
 
 procedure test(const MasterKey: TCryptoKdfKey; Context: TCryptoKdfContext);
 const
@@ -58,7 +62,9 @@ begin
     MasterKey := TCryptoKdf.Keygen;
 
     WriteLn('TCryptoKdf.Primitive=', TCryptoKdf.Primitive);
+  {$if defined(API)}
     Write('API...'); test_api(MasterKey, 'Examples');
+  {$endif}
     Write('Wrapper...'); test(MasterKey, 'Examples');
     
     ReadLn;

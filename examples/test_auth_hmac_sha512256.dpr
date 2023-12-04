@@ -6,10 +6,13 @@ program test_auth_hmac_sha512256;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.Auth in '..\lib\Sodium.Auth.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.Auth,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(Key: TCryptoAuthHmacSha512256Key);
 var
   Msg: TBytes;
@@ -25,6 +28,7 @@ begin
   else
     WriteLn('FAILED');
 end;
+{$endif}
 
 procedure test(Key: TCryptoAuthHmacSha512256Key);
 var
@@ -72,7 +76,9 @@ begin
   try
     Key := TCryptoAuthHmacSha512256.Keygen;
 
+  {$if defined(API)}
     Write('API...'); test_api(Key);
+  {$endif}
     Write('Wrapper...'); test(Key);
     Write('Wrapper (MULTIPLE BLOCKS)...'); test_multiple_blocks(Key);
 

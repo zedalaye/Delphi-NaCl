@@ -6,10 +6,13 @@ program test_shorthash;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.ShortHash in '..\lib\Sodium.ShortHash.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.ShortHash,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(key: TCryptoShortHashKey);
 var
   hash: TCryptoShortHashHash;
@@ -21,6 +24,7 @@ begin
   else
     WriteLn('crypto_shorthash() => FAILED');
 end;
+{$endif}
 
 procedure test(key: TCryptoShortHashKey);
 var
@@ -43,7 +47,9 @@ begin
     Key := TCryptoShortHash.Keygen;
 
     WriteLn('TCryptoShortHash.Primitive=', TCryptoShortHash.Primitive);
+  {$if defined(API)}
     Write('API...'); test_api(Key);
+  {$endif}
     Write('Wrapper...'); test(Key);
     
     ReadLn;

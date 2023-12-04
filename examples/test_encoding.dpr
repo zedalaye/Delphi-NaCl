@@ -6,8 +6,7 @@ program test_encoding;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas';
+  Sodium.Utils;
 
 procedure test(Buf: TBytes; Variant: TBase64Variant; Padding: Boolean);
 const

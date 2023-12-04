@@ -7,6 +7,10 @@ uses
   libsodium, Sodium.Utils;
 
 type
+  TCryptoKxPublicKey  = libsodium.TCryptoKxPublicKey;
+  TCryptoKxSecretKey  = libsodium.TCryptoKxSecretKey;
+  TCryptoKxSessionKey = libsodium.TCryptoKxSessionKey;
+
   TCryptoKx = record
     class function Primitive: string; static;
 

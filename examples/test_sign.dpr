@@ -6,10 +6,13 @@ program test_sign;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.Sign in '..\lib\Sodium.Sign.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.Sign,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(PublicKey: TCryptoSignPublicKey; SecretKey: TCryptoSignSecretKey);
 var
   sig: TCryptoSignature;
@@ -43,6 +46,7 @@ begin
   else
     WriteLn('crypto_sign_verify_detached() => SUCCESS');
 end;
+{$endif}
 
 procedure test(PublicKey: TCryptoSignPublicKey; SecretKey: TCryptoSignSecretKey);
 var
@@ -156,7 +160,9 @@ begin
       Exit;
     end;
 
+  {$if defined(API)}
     Write('API...');     test_api(pk, sk);
+  {$endif}
     Write('Wrapper...'); test(pk, sk);
     Write('Wrapper...'); test_seed(pk, sk);
     Write('Wrapper...'); test_multipart(pk, sk);

@@ -7,6 +7,9 @@ uses
   libsodium, Sodium.Utils;
 
 type
+  TCryptoAuthKey  = libsodium.TCryptoAuthKey;
+  TCryptoAuthHash = libsodium.TCryptoAuthHash;
+
   TCryptoAuth = record
     class function Primitive: string; static;
 
@@ -15,6 +18,9 @@ type
     class function Hash(var &Out: TCryptoAuthHash; const &In: TBytes; const Key): Boolean; overload; static;
     class function Verify(const Hash: TCryptoAuthHash; const &In: TBytes; const Key): Boolean; static;
   end;
+
+  TCryptoAuthHmacSha256Key  = libsodium.TCryptoAuthHmacSha256Key;
+  TCryptoAuthHmacSha256Hash = libsodium.TCryptoAuthHmacSha256Hash;
 
   TCryptoAuthHmacSha256 = record
   public
@@ -26,6 +32,9 @@ type
     class function Verify(const Hash: TCryptoAuthHmacSha256Hash; const &In: TBytes; const Key): Boolean; static;
   end;
 
+  TCryptoAuthHmacSha512Key  = libsodium.TCryptoAuthHmacSha512Key;
+  TCryptoAuthHmacSha512Hash = libsodium.TCryptoAuthHmacSha512Hash;
+
   TCryptoAuthHmacSha512 = record
   public
     class function Keygen: TCryptoAuthHmacSha512Key; static;
@@ -35,6 +44,9 @@ type
 
     class function Verify(const Hash: TCryptoAuthHmacSha512Hash; const &In: TBytes; const Key): Boolean; static;
   end;
+
+  TCryptoAuthHmacSha512256Key  = libsodium.TCryptoAuthHmacSha512256Key;
+  TCryptoAuthHmacSha512256Hash = libsodium.TCryptoAuthHmacSha512256Hash;
 
   TCryptoAuthHmacSha512256 = record
   public

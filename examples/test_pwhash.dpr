@@ -6,10 +6,14 @@ program test_pwhash;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.PwHash in '..\lib\Sodium.PwHash.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.PwHash,
+  Sodium.Box,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(const Password: string; const Salt: TCryptoPwHashSalt);
 var
   key: TCryptoBoxSeed;
@@ -41,6 +45,7 @@ begin
       WriteLn('crypto_pwhash_str_verify() => SUCCESS')
   end;
 end;
+{$endif}
 
 procedure test_derive_key(const Password: string; const Salt: TCryptoPwHashSalt);
 var
@@ -83,9 +88,11 @@ begin
     TBytes.Random(Salt, SizeOf(Salt));
 
     WriteLn('TCryptoPwHash.Primitive=', TCryptoPwHash.Primitive);
+  {$if defined(API)}
     Write('API...'); test_api(PASSWORD, Salt);
+  {$endif}
     Write('Wrapper (DERIVE KEY)...'); test_derive_key(PASSWORD, Salt);
-    Write('Wrapper (GENERATE STR)...'); test_hash_pwd(PASSWORD);
+    Write('Wrapper (GENERATE STR - CAN TAKE SEVERAL SECONDS)...'); test_hash_pwd(PASSWORD);
     
     ReadLn;
   except

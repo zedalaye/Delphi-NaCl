@@ -5,11 +5,15 @@ program test_secretstream;
 {$R *.res}
 
 uses
-  System.SysUtils, System.Classes,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.SecretStream in '..\lib\Sodium.SecretStream.pas';
+  System.SysUtils,
+  System.Classes,
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.SecretStream,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(key: TCryptoSecretStreamXChacha20Poly1305Key);
 var
   state: TCryptoSecretStreamXChacha20Poly1305State;
@@ -81,12 +85,13 @@ begin
 
   WriteLn('crypto_secret_stream => SUCCESS');
 end;
+{$endif}
 
-procedure test(Key: TCryptoSecretStreamXChacha20Poly1305Key);
+procedure test(Key: TCryptoSecretStreamKey);
 const
   M: array[0..2] of string = ('Arbitrary data to encrypt', 'split into', 'three messages');
 var
-  Header: TCryptoSecretStreamXChacha20Poly1305Header;
+  Header: TCryptoSecretStreamHeader;
   I: Integer;
   C: array[0..2] of TBytes;
 begin
@@ -138,7 +143,7 @@ begin
     WriteLn('TCryptoSecretStream.Push() => FAILED');
 end;
 
-procedure test_stream(Key: TCryptoSecretStreamXChacha20Poly1305Key);
+procedure test_stream(Key: TCryptoSecretStreamKey);
 const
   M = 'This is a string, wrapped in a stream';
 var
@@ -176,13 +181,15 @@ begin
 end;
 
 var
-  key: TCryptoSecretStreamXChacha20Poly1305Key;
+  key: TCryptoSecretStreamKey;
 
 begin
   try
     key := TCryptoSecretStream.Keygen;
 
+  {$if defined(API)}
     Write('API...'); test_api(key);
+  {$endif}
     Write('Wrapper...'); test(key);
     Write('Wrapper...'); test_stream(key);
 

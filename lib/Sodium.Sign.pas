@@ -7,6 +7,13 @@ uses
   libsodium, Sodium.Utils;
 
 type
+  TCryptoSignSeed      = libsodium.TCryptoSignSeed;
+  TCryptoSignPublicKey = libsodium.TCryptoSignPublicKey;
+  TCryptoSignSecretKey = libsodium.TCryptoSignSecretKey;
+  TCryptoSignature     = libsodium.TCryptoSignature;
+
+  TCryptoScalarMultCurve25519Key = libsodium.TCryptoScalarMultCurve25519Key;
+
   TCryptoSign = record
     class function Primitive: string; static;
 

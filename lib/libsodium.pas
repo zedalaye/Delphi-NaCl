@@ -974,13 +974,7 @@ function crypto_generichash_primitive: PAnsiChar; cdecl; external SODIUM_LIB;
  * the state address should be 64-bytes aligned.
  *)
 type
-  PCryptoGenericHashState = ^TCryptoGenericHashState;
   TCryptoGenericHashState = TCryptoGenericHashBlake2bState;
-
-{ Delphi has no method to return aligned blocks on 64 bytes boundaries,
-   this one do the trick.
-  Free the memory using FreeMem(BlockStart) }
-function GetAlignedCryptoGenericHashState(var BlockStart: Pointer): PCryptoGenericHashState;
 
 function crypto_generichash_statebytes: NativeUint; cdecl; external SODIUM_LIB;
 
@@ -3470,18 +3464,6 @@ function _CRYPTO_AEAD_CHACHA20POLY1305_IETF_MESSAGEBYTES_MAX: UInt64; inline;
 begin
   Result := SODIUM_MIN(SODIUM_SIZE_MAX - _CRYPTO_AEAD_CHACHA20POLY1305_IETF_ABYTES,
     (UInt64(64) * ((UInt64(1) shl 32) - UInt64(1))));
-end;
-
-(* sodium/crypto_generichash.h *)
-
-function GetAlignedCryptoGenericHashState(var BlockStart: Pointer): PCryptoGenericHashState;
-const
-  ALIGN_BYTES = 64;
-begin
-  { Allocate a slightly bigger block keeping the whole block a multiple of 16 bytes }
-  GetMem(BlockStart, SizeOf(TCryptoGenericHashState) + ALIGN_BYTES);
-  { Return a slice starting at (BlockStart + 63) & -64 }
-  Result := PCryptoGenericHashState((NativeUInt(BlockStart) + (ALIGN_BYTES -1)) and not(ALIGN_BYTES -1));
 end;
 
 (* sodium/crypto_stream_chacha20.h *)

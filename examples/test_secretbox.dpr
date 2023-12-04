@@ -6,10 +6,13 @@ program test_secretbox;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.SecretBox in '..\lib\Sodium.SecretBox.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.SecretBox,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(Key: TCryptoSecretBoxKey; Nonce: TCryptoSecretBoxNonce);
 var
   ciphertext: TBytes;
@@ -26,6 +29,7 @@ begin
   else
     WriteLn('crypto_secretbox() => SUCCESS');
 end;
+{$endif}
 
 procedure test(Key: TCryptoSecretBoxKey; Nonce: TCryptoSecretBoxNonce);
 var
@@ -81,7 +85,9 @@ begin
     TBytes.Random(Nonce, SizeOf(TCryptoSecretBoxNonce));
 
     WriteLn('TCryptoSecretBox.Primitive=', TCryptoSecretBox.Primitive);
+  {$if defined(API)}
     Write('API...'); test_api(Key, Nonce);
+  {$endif}
     Write('Wrapper...'); test(Key, Nonce);
     Write('Wrapper (DETACHED)...'); test_detached(Key, Nonce);
 

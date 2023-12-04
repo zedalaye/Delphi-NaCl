@@ -34,6 +34,8 @@ type
     class function ImplementationName: string; static;
   end;
 
+  TRandomBytesSeed = libsodium.TRandomBytesSeed;
+
   TBase64Variant = (
     Original = SODIUM_BASE64_VARIANT_ORIGINAL,
     UrlSafe = SODIUM_BASE64_VARIANT_URLSAFE
@@ -166,6 +168,19 @@ type
 { Because @B[0] when B is empty is not nil }
 function BytesPointer(B: TBytes): PByte;
 
+(*
+ * Important when writing bindings for other programming languages:
+ * the state address should be 64-bytes aligned.
+ *)
+type
+  PCryptoGenericHashState = ^TCryptoGenericHashState;
+  TCryptoGenericHashState = libsodium.TCryptoGenericHashState;
+
+{ Delphi has no method to return aligned blocks on 64 bytes boundaries,
+   this one do the trick.
+  Free the memory using FreeMem(BlockStart) }
+function GetAlignedCryptoGenericHashState(var BlockStart: Pointer): PCryptoGenericHashState;
+
 implementation
 
 function BytesPointer(B: TBytes): PByte;
@@ -174,6 +189,16 @@ begin
     Result := nil
   else
     Result := @B[0];
+end;
+
+function GetAlignedCryptoGenericHashState(var BlockStart: Pointer): PCryptoGenericHashState;
+const
+  ALIGN_BYTES = 64;
+begin
+  { Allocate a slightly bigger block keeping the whole block a multiple of 16 bytes }
+  GetMem(BlockStart, SizeOf(TCryptoGenericHashState) + ALIGN_BYTES);
+  { Return a slice starting at (BlockStart + 63) & -64 }
+  Result := PCryptoGenericHashState((NativeUInt(BlockStart) + (ALIGN_BYTES -1)) and not(ALIGN_BYTES -1));
 end;
 
 { TRandom }

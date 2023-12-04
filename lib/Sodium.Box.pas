@@ -7,6 +7,12 @@ uses
   libsodium, Sodium.Utils;
 
 type
+  TCryptoBoxSeed      = libsodium.TCryptoBoxSeed;
+  TCryptoBoxPublicKey = libsodium.TCryptoBoxPublicKey;
+  TCryptoBoxSecretKey = libsodium.TCryptoBoxSecretKey;
+  TCryptoBoxNonce     = libsodium.TCryptoBoxNonce;
+  TCryptoBoxMac       = libsodium.TCryptoBoxMac;
+
   TCryptoBox = record
     class function Primitive: string; static;
 

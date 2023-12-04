@@ -6,10 +6,13 @@ program test_kdf_hkdf_sha512;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.Kdf in '..\lib\Sodium.Kdf.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.Kdf,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(const MasterKey: TCryptoKdfHkdfSha512Key);
 var
   subkey_1: array[0..31] of Byte;
@@ -25,6 +28,7 @@ begin
   crypto_kdf_hkdf_sha512_expand(@subkey_3[0], Sizeof(subkey_3), PAnsiChar('key for something else'), Length('key for something else'), MasterKey);
   WriteLn('subkey_3=', TBytes.ToHex(subkey_3, SizeOf(subkey_3)));
 end;
+{$endif}
 
 procedure test(const MasterKey: TCryptoKdfHkdfSha512Key);
 const
@@ -90,7 +94,9 @@ begin
   try
     MasterKey := TCryptoKdfHkdfSha512.Keygen;
 
+  {$if defined(API)}
     Write('API...'); test_api(MasterKey);
+  {$endif}
     Write('Wrapper...'); test(MasterKey);
     Write('Wrapper...'); test_extract('6723D3AA-C6CA-4F3C-8F24-94B550C5F10A', 'John Doe - 951a 6158 4fe0 8a0b ad7c b57b 7687 09b6');
     Write('Wrapper (INCREMENTAL)...'); test_extract_incremental('6723D3AA-C6CA-4F3C-8F24-94B550C5F10A', [

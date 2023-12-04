@@ -6,10 +6,13 @@ program test_onetimeauth;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.OnetimeAuth in '..\lib\Sodium.OnetimeAuth.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.OnetimeAuth,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(key: TCryptoOnetimeAuthKey);
 var
   &out: TCryptoOnetimeAuthTag;
@@ -28,6 +31,7 @@ begin
   else
     WriteLn('crypto_onetimeauth() => FAILED');
 end;
+{$endif}
 
 procedure test(key: TCryptoOnetimeAuthKey);
 var
@@ -88,7 +92,9 @@ begin
     key := TCryptoOnetimeAuth.Keygen;
 
     WriteLn('TCryptoOnetimeAuth.Primitive=', TCryptoOnetimeAuth.Primitive);
+  {$if defined(API)}
     Write('API...'); test_api(key);
+  {$endif}
     Write('Wrapper...'); test(key);
     Write('Wrapper (MULTIPART)...'); test_multipart(key);
     

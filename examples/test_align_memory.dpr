@@ -6,9 +6,8 @@ program test_align_memory;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.Aead in '..\lib\Sodium.Aead.pas';
+  Sodium.Aead,
+  Sodium.Utils;
 
 procedure test_getmem;
 var

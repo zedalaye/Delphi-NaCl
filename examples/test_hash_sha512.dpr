@@ -6,10 +6,13 @@ program test_hash_sha512;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.Hash in '..\lib\Sodium.Hash.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.Hash,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api;
 var
   &Out: TCryptoHashSha512Hash;
@@ -20,6 +23,7 @@ begin
   else
     WriteLn('FAILED');
 end;
+{$endif}
 
 procedure test;
 var
@@ -54,9 +58,13 @@ end;
 
 begin
   try
+  {$if defined(API)}
     Write('API...'); test_api;
+  {$endif}
     Write('Wrapper...'); test;
     Write('Wrapper...'); test_multiple_blocks;
+
+    ReadLn;
   except
     on E: Exception do
       Writeln(E.ClassName, ': ', E.Message);

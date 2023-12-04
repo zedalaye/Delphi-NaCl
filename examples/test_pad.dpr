@@ -6,9 +6,12 @@ program test_pad;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(const Buffer: TBytes);
 var
   PaddedBuffer: TBytes;
@@ -35,6 +38,7 @@ begin
   else
     Writeln('FAILED (pad)');
 end;
+{$endif}
 
 procedure test(const Buffer: TBytes);
 var
@@ -64,7 +68,9 @@ begin
   try
     Buffer := TBytes.Random(16);
 
+  {$if defined(API)}
     Write('API...'); test_api(Buffer);
+  {$endif}
     Write('Wrapper...'); test(Buffer);
     
     ReadLn;

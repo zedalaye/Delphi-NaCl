@@ -7,6 +7,9 @@ uses
   libsodium, Sodium.Utils;
 
 type
+  TCryptoKdfKey = libsodium.TCryptoKdfKey;
+  TCryptoKdfContext = libsodium.TCryptoKdfContext;
+
   TCryptoKdf = record
     class function Primitive: string; static;
 
@@ -15,6 +18,8 @@ type
     class function DeriveFromKey(var SubKey; SubKeyLen: NativeUInt; SubKeyId: UInt64;
       const Context: TCryptoKdfContext; const MasterKey: TCryptoKdfKey): Boolean; static;
   end;
+
+  TCryptoKdfHkdfSha256Key = libsodium.TCryptoKdfHkdfSha256Key;
 
   TCryptoKdfHkdfSha256 = record
     class function Keygen: TCryptoKdfHkdfSha256Key; static;
@@ -27,6 +32,8 @@ type
     class function Expand(var SubKey; SubKeyLen: NativeUInt;
       const Context: RawByteString; const MasterKey: TCryptoKdfHkdfSha256Key): Boolean; static;
   end;
+
+  TCryptoKdfHkdfSha512Key = libsodium.TCryptoKdfHkdfSha512Key;
 
   TCryptoKdfHkdfSha512 = record
     class function Keygen: TCryptoKdfHkdfSha512Key; static;

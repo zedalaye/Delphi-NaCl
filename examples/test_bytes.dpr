@@ -6,8 +6,7 @@ program test_bytes;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas';
+  Sodium.Utils;
 
 procedure test;
 var

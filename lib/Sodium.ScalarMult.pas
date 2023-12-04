@@ -7,6 +7,9 @@ uses
   libsodium, Sodium.Utils;
 
 type
+  TCryptoScalarMultQ      = libsodium.TCryptoScalarMultQ;
+  TCryptoScalarMultScalar = libsodium.TCryptoScalarMultScalar;
+
   TCryptoScalarMult = record
     class function Primitive: string; static;
 

@@ -33,28 +33,31 @@ type
     const Buf: TBytes; const Tag: TCryptoStreamTag; Done: Boolean
   );
 
+  TCryptoSecretStreamHeader = libsodium.TCryptoSecretStreamXChacha20Poly1305Header;
+  TCryptoSecretStreamKey = libsodium.TCryptoSecretStreamXChacha20Poly1305Key;
+
   TCryptoSecretStream = record
-    class function Keygen: TCryptoSecretStreamXChacha20Poly1305Key; static;
+    class function Keygen: TCryptoSecretStreamKey; static;
 
     class function Push(
-      var Header: TCryptoSecretStreamXChacha20Poly1305Header;
+      var Header: TCryptoSecretStreamHeader;
       const InProc: TCryptoSecretStreamPushInProc;
       const OutProc: TCryptoSecretStreamPushOutProc;
-      const Key: TCryptoSecretStreamXChacha20Poly1305Key): Boolean; static;
+      const Key: TCryptoSecretStreamKey): Boolean; static;
 
     class function Pull(
-      const Header: TCryptoSecretStreamXChacha20Poly1305Header;
+      const Header: TCryptoSecretStreamHeader;
       const InProc: TCryptoSecretStreamPullInProc;
       const OutProc: TCryptoSecretStreamPullOutProc;
-      const Key: TCryptoSecretStreamXChacha20Poly1305Key): Boolean; static;
+      const Key: TCryptoSecretStreamKey): Boolean; static;
 
     class function PushStream(
       const InStream, OutStream: TStream;
-      const Key: TCryptoSecretStreamXChacha20Poly1305Key): Boolean; static;
+      const Key: TCryptoSecretStreamKey): Boolean; static;
 
     class function PullStream(
       const InStream, OutStream: TStream;
-      const Key: TCryptoSecretStreamXChacha20Poly1305Key): Boolean; static;
+      const Key: TCryptoSecretStreamKey): Boolean; static;
   end;
 
 implementation

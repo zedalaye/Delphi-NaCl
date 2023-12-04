@@ -6,10 +6,13 @@ program test_aead_xchacha20poly1305_ietf;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.Aead in '..\lib\Sodium.Aead.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.Aead,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api;
 var
   key: TCryptoAeadXChacha20poly1305IetfKey;
@@ -49,6 +52,7 @@ begin
   else
     WriteLn('FAILED (encrypt)');
 end;
+{$endif}
 
 procedure test;
 var
@@ -77,8 +81,12 @@ end;
 
 begin
   try
+  {$if defined(API)}
     Write('API...'); test_api;
+  {$endif}
     Write('Wrapper...'); test;
+
+    ReadLn;
   except
     on E: Exception do
       Writeln(E.ClassName, ': ', E.Message);

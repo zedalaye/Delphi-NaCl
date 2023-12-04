@@ -7,6 +7,10 @@ uses
   libsodium, Sodium.Utils;
 
 type
+  TCryptoHashSha256Hash = libsodium.TCryptoHashSha256Hash;
+  TCryptoHashSha512Hash = libsodium.TCryptoHashSha512Hash;
+  TCryptoHashHash       = libsodium.TCryptoHashHash;
+
   TCryptoHash = record
     class function Primitive: string; static;
 
@@ -21,6 +25,14 @@ type
     class function Default(var &Out: TCryptoHashHash; const &In; Len: NativeUInt): Boolean; overload; static;
     class function Default(var &Out: TCryptoHashHash; const &In: TBytes): Boolean; overload; static;
   end;
+
+const
+  _CRYPTO_GENERICHASH_KEYBYTES_MIN = libsodium._CRYPTO_GENERICHASH_KEYBYTES_MIN;
+  _CRYPTO_GENERICHASH_KEYBYTES_MAX = libsodium._CRYPTO_GENERICHASH_KEYBYTES_MAX;
+
+type
+  TCryptoGenericHashHash = libsodium.TCryptoGenericHashHash;
+  TCryptoGenericHashKey  = libsodium.TCryptoGenericHashKey;
 
   TCryptoGenericHash = record
   private

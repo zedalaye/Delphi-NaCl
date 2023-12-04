@@ -6,10 +6,13 @@ program test_kx;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.Kx in '..\lib\Sodium.Kx.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.Kx,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(client_pk: TCryptoKxPublicKey; client_sk: TCryptoKxSecretKey;
   server_pk: TCryptoKxPublicKey; server_sk: TCryptoKxSecretKey);
 var
@@ -41,6 +44,7 @@ begin
   WriteLn('server_rx=', TBytes.ToHex(server_rx, SizeOf(server_rx)));
   WriteLn('server_tx=', TBytes.ToHex(server_tx, SizeOf(server_tx)));
 end;
+{$endif}
 
 procedure test(ClientPk: TCryptoKxPublicKey; ClientSk: TCryptoKxSecretKey;
   ServerPk: TCryptoKxPublicKey; ServerSk: TCryptoKxSecretKey);
@@ -84,7 +88,9 @@ begin
     TCryptoKx.Keypair(server_pk, server_sk);
 
     WriteLn('TCryptoKx.Primitive=', TCryptoKx.Primitive);
+  {$if defined(API)}
     Write('API...'); test_api(client_pk, client_sk, server_pk, server_sk);
+  {$endif}
     Write('Wrapper...'); test(client_pk, client_sk, server_pk, server_sk);
 
     ReadLn;

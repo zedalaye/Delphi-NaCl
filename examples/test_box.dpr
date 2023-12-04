@@ -6,10 +6,13 @@ program test_box;
 
 uses
   System.SysUtils,
-  libsodium in '..\lib\libsodium.pas',
-  Sodium.Utils in '..\lib\Sodium.Utils.pas',
-  Sodium.Box in '..\lib\Sodium.Box.pas';
+{$if defined(API)}
+  libsodium,
+{$endif}
+  Sodium.Box,
+  Sodium.Utils;
 
+{$if defined(API)}
 procedure test_api(Nonce: TCryptoBoxNonce;
   AlicePublicKey: TCryptoBoxPublicKey; AliceSecretKey: TCryptoBoxSecretKey;
   BobPublicKey: TCryptoBoxPublicKey; BobSecretKey: TCryptoBoxSecretKey);
@@ -32,6 +35,7 @@ begin
   else
     WriteLn('crypto_box() => OK');
 end;
+{$endif}
 
 procedure test(Nonce: TCryptoBoxNonce;
   AlicePublicKey: TCryptoBoxPublicKey; AliceSecretKey: TCryptoBoxSecretKey;
@@ -111,7 +115,9 @@ begin
 
     Nonce := TCryptoBox.Nonce;
 
+  {$if defined(API)}
     Write('API...'); test_api(Nonce, AlicePublicKey, AliceSecretKey, BobPublicKey, BobSecretKey);
+  {$endif}
     Write('Wrapper...'); test(Nonce, AlicePublicKey, AliceSecretKey, BobPublicKey, BobSecretKey);
     Write('Wrapper (DETACHED)...'); test_detached(Nonce, AlicePublicKey, AliceSecretKey, BobPublicKey, BobSecretKey);
     Write('Wrapper (SEAL)...'); test_seal(BobPublicKey, BobSecretKey);
