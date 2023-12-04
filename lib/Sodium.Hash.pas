@@ -10,30 +10,40 @@ type
   TCryptoHash = record
     class function Primitive: string; static;
 
-    class function Sha256(var &Out: TCryptoHashSha256Hash; &In: TBytes): Boolean; overload; static;
+    class function Sha256(var &Out: TCryptoHashSha256Hash; const &In; Len: NativeUInt): Boolean; overload; static;
+    class function Sha256(var &Out: TCryptoHashSha256Hash; const &In: TBytes): Boolean; overload; static;
     class function Sha256(var &Out: TCryptoHashSha256Hash; const InProc: TCryptoDataProc): Boolean; overload; static;
 
-    class function Sha512(var &Out: TCryptoHashSha512Hash; &In: TBytes): Boolean; overload; static;
+    class function Sha512(var &Out: TCryptoHashSha512Hash; const &In; Len: NativeUInt): Boolean; overload; static;
+    class function Sha512(var &Out: TCryptoHashSha512Hash; const &In: TBytes): Boolean; overload; static;
     class function Sha512(var &Out: TCryptoHashSha512Hash; const InProc: TCryptoDataProc): Boolean; overload; static;
 
-    class function Default(var &Out: TCryptoHashHash; &In: TBytes): Boolean; overload; static;
+    class function Default(var &Out: TCryptoHashHash; const &In; Len: NativeUInt): Boolean; overload; static;
+    class function Default(var &Out: TCryptoHashHash; const &In: TBytes): Boolean; overload; static;
   end;
 
   TCryptoGenericHash = record
   private
-    class function Hash(var &Out: TCryptoGenericHashHash; &In: TBytes; const Key: PByte; KeyLen: NativeUInt): Boolean; overload; static;
-    class function Hash(var &Out: TCryptoGenericHashHash; InProc: TCryptoDataProc; const Key: PByte; KeyLen: NativeUInt): Boolean; overload; static;
+    class function Hash(var &Out: TCryptoGenericHashHash; const &In; InLen: NativeUInt;  const Key: PByte; KeyLen: NativeUInt): Boolean; overload; static;
+    class function Hash(var &Out: TCryptoGenericHashHash; const InProc: TCryptoDataProc; const Key: PByte; KeyLen: NativeUInt): Boolean; overload; static;
   public
     class function Primitive: string; static;
 
     class function Keygen: TCryptoGenericHashKey; overload; static;
     class function Keygen(Len: NativeUInt): TBytes; overload; static;
 
-    class function Hash(var &Out: TCryptoGenericHashHash; &In: TBytes): Boolean; overload; static;
-    class function Hash(var &Out: TCryptoGenericHashHash; &In: TBytes; const Key: TCryptoGenericHashKey): Boolean; overload; static;
-    class function Hash(var &Out: TCryptoGenericHashHash; &In: TBytes; const Key: TBytes): Boolean; overload; static;
+    class function Hash(var &Out: TCryptoGenericHashHash; const &In; InLen: NativeUInt): Boolean; overload; static;
+    class function Hash(var &Out: TCryptoGenericHashHash; const &In; InLen: NativeUInt; const Key; KeyLen: NativeUInt): Boolean; overload; static;
+    class function Hash(var &Out: TCryptoGenericHashHash; const &In; InLen: NativeUInt; const Key: TCryptoGenericHashKey): Boolean; overload; static;
+    class function Hash(var &Out: TCryptoGenericHashHash; const &In; InLen: NativeUInt; const Key: TBytes): Boolean; overload; static;
+
+    class function Hash(var &Out: TCryptoGenericHashHash; const &In: TBytes): Boolean; overload; static;
+    class function Hash(var &Out: TCryptoGenericHashHash; const &In: TBytes; const Key; KeyLen: NativeUInt): Boolean; overload; static;
+    class function Hash(var &Out: TCryptoGenericHashHash; const &In: TBytes; const Key: TCryptoGenericHashKey): Boolean; overload; static;
+    class function Hash(var &Out: TCryptoGenericHashHash; const &In: TBytes; const Key: TBytes): Boolean; overload; static;
 
     class function Hash(var &Out: TCryptoGenericHashHash; const InProc: TCryptoDataProc): Boolean; overload; static;
+    class function Hash(var &Out: TCryptoGenericHashHash; const InProc: TCryptoDataProc; const Key; KeyLen: NativeUInt): Boolean; overload; static;
     class function Hash(var &Out: TCryptoGenericHashHash; const InProc: TCryptoDataProc; const Key: TCryptoGenericHashKey): Boolean; overload; static;
     class function Hash(var &Out: TCryptoGenericHashHash; const InProc: TCryptoDataProc; const Key: TBytes): Boolean; overload; static;
   end;
@@ -47,9 +57,16 @@ begin
   Result := string(crypto_hash_primitive);
 end;
 
-class function TCryptoHash.Sha256(var &Out: TCryptoHashSha256Hash; &In: TBytes): Boolean;
+class function TCryptoHash.Sha256(var &Out: TCryptoHashSha256Hash;
+  const &In; Len: NativeUInt): Boolean;
 begin
-  Result := crypto_hash_sha256(@&Out[0], @&In[0], Length(&In)) = 0;
+  Result := crypto_hash_sha256(@&Out[0], @&In, Len) = 0;
+end;
+
+class function TCryptoHash.Sha256(var &Out: TCryptoHashSha256Hash;
+  const &In: TBytes): Boolean;
+begin
+  Result := Sha256(&Out, &In[0], Length(&In));
 end;
 
 class function TCryptoHash.Sha256(var &Out: TCryptoHashSha256Hash;
@@ -74,9 +91,15 @@ begin
 end;
 
 class function TCryptoHash.Sha512(var &Out: TCryptoHashSha512Hash;
-  &In: TBytes): Boolean;
+  const &In; Len: NativeUInt): Boolean;
 begin
-  Result := crypto_hash_sha512(@&Out[0], @&In[0], Length(&In)) = 0;
+  Result := crypto_hash_sha512(@&Out[0], @&In, Len) = 0;
+end;
+
+class function TCryptoHash.Sha512(var &Out: TCryptoHashSha512Hash;
+  const &In: TBytes): Boolean;
+begin
+  Result := Sha512(&Out, &In[0], Length(&In));
 end;
 
 class function TCryptoHash.Sha512(var &Out: TCryptoHashSha512Hash;
@@ -101,9 +124,15 @@ begin
 end;
 
 class function TCryptoHash.Default(var &Out: TCryptoHashHash;
-  &In: TBytes): Boolean;
+  const &In; Len: NativeUInt): Boolean;
 begin
-  Result := crypto_hash(@&Out[0], @&In[0], Length(&In)) = 0;
+  Result := crypto_hash(@&Out[0], @&In, Len) = 0;
+end;
+
+class function TCryptoHash.Default(var &Out: TCryptoHashHash;
+  const &In: TBytes): Boolean;
+begin
+  Result := Default(&Out, &In[0], Length(&In));
 end;
 
 { TCryptoGenericHash }
@@ -128,36 +157,66 @@ begin
 end;
 
 class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
-  &In: TBytes; const Key: PByte; KeyLen: NativeUInt): Boolean;
+  const &In; InLen: NativeUInt; const Key: PByte; KeyLen: NativeUInt): Boolean;
 begin
   if KeyLen > _CRYPTO_GENERICHASH_KEYBYTES_MAX then
     raise EArgumentException.CreateFmt('Key Length must be <= %d', [_CRYPTO_GENERICHASH_KEYBYTES_MAX]);
 
   Result := crypto_generichash(@&Out[0], SizeOf(&Out),
-                               @&In[0], Length(&In),
+                               @&In, InLen,
                                Key, KeyLen) = 0;
 end;
 
 class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
-  &In: TBytes): Boolean;
+  const &In; InLen: NativeUInt): Boolean;
 begin
-  Result := TCryptoGenericHash.Hash(&Out, &In, nil, 0);
+  Result := Hash(&Out, &In, InLen, nil, 0);
 end;
 
 class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
-  &In: TBytes; const Key: TCryptoGenericHashKey): Boolean;
+  const &In; InLen: NativeUInt; const Key; KeyLen: NativeUInt): Boolean;
 begin
-  Result := TCryptoGenericHash.Hash(&Out, &In, @Key[0], SizeOf(Key));
+  Result := Hash(&Out, &In, InLen, @Key, KeyLen);
 end;
 
 class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
-  &In: TBytes; const Key: TBytes): Boolean;
+  const &In; InLen: NativeUInt; const Key: TCryptoGenericHashKey): Boolean;
 begin
-  Result := TCryptoGenericHash.Hash(&Out, &In, @Key[0], Length(Key));
+  Result := Hash(&Out, &In, InLen, @Key[0], SizeOf(Key));
 end;
 
 class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
-  InProc: TCryptoDataProc; const Key: PByte; KeyLen: NativeUInt): Boolean;
+  const &In; InLen: NativeUInt; const Key: TBytes): Boolean;
+begin
+  Result := Hash(&Out, &In, InLen, @Key[0], Length(Key));
+end;
+
+class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
+  const &In: TBytes): Boolean;
+begin
+  Result := Hash(&Out, &In[0], Length(&In), nil, 0);
+end;
+
+class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
+  const &In: TBytes; const Key; KeyLen: NativeUInt): Boolean;
+begin
+  Result := Hash(&Out, &In[0], Length(&In), @Key, KeyLen);
+end;
+
+class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
+  const &In: TBytes; const Key: TCryptoGenericHashKey): Boolean;
+begin
+  Result := Hash(&Out, &In[0], Length(&In), @Key[0], SizeOf(Key));
+end;
+
+class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
+  const &In: TBytes; const Key: TBytes): Boolean;
+begin
+  Result := Hash(&Out, &In[0], Length(&In), @Key[0], Length(Key));
+end;
+
+class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
+  const InProc: TCryptoDataProc; const Key: PByte; KeyLen: NativeUInt): Boolean;
 var
   StateP: Pointer;
   State: PCryptoGenericHashState;
@@ -190,6 +249,12 @@ class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
   const InProc: TCryptoDataProc): Boolean;
 begin
   Result := TCryptoGenericHash.Hash(&Out, InProc, nil, 0);
+end;
+
+class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
+  const InProc: TCryptoDataProc; const Key; KeyLen: NativeUInt): Boolean;
+begin
+  Result := TCryptoGenericHash.Hash(&Out, InProc, @Key, KeyLen);
 end;
 
 class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;

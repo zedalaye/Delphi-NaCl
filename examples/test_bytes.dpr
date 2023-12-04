@@ -97,6 +97,10 @@ begin
     WriteLn('SeedBytes from Base64 = ', TBytes.ToHex(SeedBytes))
   else
     WriteLn('TBytes.FromBase64(TBytes) FAILED');
+
+  WriteLn('A+B=', A.ToHex, '+', B.ToHex, '=', (A+B).ToHex);
+  var D := TBytes.Concat(A, B);
+  WriteLn('TBytes.Concat(A, B)=', D.ToHex);
 end;
 
 procedure test_errors;

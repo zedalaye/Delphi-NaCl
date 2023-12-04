@@ -42,6 +42,14 @@ type
   TBytesHelper = record helper for TBytes
     class procedure SameSize(const A, B: TBytes); static;
 
+    { Concatenation }
+    class function Concat(const A, B: TBytes): TBytes; overload; static;
+    class function Concat(const A: array of TBytes): TBytes; overload; static;
+
+    { Reverse }
+    class function Reverse(const B: TBytes): TBytes; overload; static;
+    function Reverse: TBytes; overload;
+
     { Buffers <=> TBytes }
     class function FromBuf(const Buf; Len: NativeUInt): TBytes; overload; static;
     class function FromBuf<T>(const Buf: T): TBytes; overload; static;
@@ -272,6 +280,42 @@ begin
     raise EArgumentException.CreateFmt('SizeOf(A)=%d bytes <> SizeOf(B)=%d bytes', [Length(A), Length(B)]);
 end;
 
+class function TBytesHelper.Concat(const A, B: TBytes): TBytes;
+begin
+  SetLength(Result, Length(A) + Length(B));
+  Move(A[0], Result[0], Length(A));
+  Move(B[0], Result[Length(A)], Length(B));
+end;
+
+class function TBytesHelper.Concat(const A: array of TBytes): TBytes;
+var
+  Total, Offset: NativeUInt;
+begin
+ // Result := A[0] + A[1];
+  Total := 0;
+  for var Buf in A do
+    Total := Total + NativeUInt(Length(Buf));
+  SetLength(Result, Total);
+  Offset := 0;
+  for var Buf in A do
+  begin
+    Move(Buf[0], Result[Offset], Length(Buf));
+    Offset := Offset + NativeUInt(Length(Buf));
+  end;
+end;
+
+class function TBytesHelper.Reverse(const B: TBytes): TBytes;
+begin
+  SetLength(Result, Length(B));
+  for var I := Low(B) to High(B) do
+    Result[High(B) - I] := B[I];
+end;
+
+function TBytesHelper.Reverse: TBytes;
+begin
+  Result := TBytes.Reverse(Self);
+end;
+
 class function TBytesHelper.FromBuf(const Buf; Len: NativeUInt): TBytes;
 begin
   SetLength(Result, Len);
@@ -384,7 +428,7 @@ var
 begin
   SetLength(Hex, Len * 2 + 1); // bin2hex adds an ending \0
   sodium_bin2hex(@Hex[1], Length(Hex), @Buf, Len);
-  Result := string(Hex);
+  Result := Trim(string(Hex));
 end;
 
 class function TBytesHelper.ToHex<T>(const Buf: T): string;

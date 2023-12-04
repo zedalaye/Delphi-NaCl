@@ -57,7 +57,7 @@ begin
          Inc(I);
          Done := I > High(M);
        end,
-       Key
+       Key, SizeOf(Key)
      )
   then
     WriteLn('SUCCESS (Hash=', TBytes.ToHex(Hash, SizeOf(Hash)), ')')
