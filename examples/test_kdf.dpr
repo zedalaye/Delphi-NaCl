@@ -43,11 +43,14 @@ var
   I: UInt64;
 begin
   for I := Low(SubKeys) to High(SubKeys) do
-    if not TCryptoKdf.DeriveFromKey(SubKeys[I], KeyLengths[I], I +1, Context, MasterKey) then
+  begin
+    SetLength(SubKeys[I], KeyLengths[I]);
+    if not TCryptoKdf.DeriveFromKey(SubKeys[I][0], KeyLengths[I], I +1, Context, MasterKey) then
     begin
       WriteLn('FAILED');
       Exit;
     end;
+  end;
 
   WriteLn('SUCCESS');
   for I := Low(SubKeys) to High(SubKeys) do

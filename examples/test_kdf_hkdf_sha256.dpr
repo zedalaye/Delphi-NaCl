@@ -40,8 +40,9 @@ var
 begin
   for I := Low(SubKeys) to High(SubKeys) do
   begin
-    if TCryptoKdfHkdfSha256.Expand(SubKeys[I], KeyLengths[I], KeyContexts[I], MasterKey) then
-      WriteLn('SubKey', I+1, '=', TBytes.ToHex(SubKeys[I]));
+    SetLength(SubKeys[I], KeyLengths[I]);
+    if TCryptoKdfHkdfSha256.Expand(SubKeys[I][0], KeyLengths[I], KeyContexts[I], MasterKey) then
+      WriteLn('SubKey', I+1, ' (', KeyContexts[I], ') = ', TBytes.ToHex(SubKeys[I]));
   end;
 end;
 
