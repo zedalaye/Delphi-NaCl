@@ -90,6 +90,9 @@
         <Projects Include="examples\test_scalarmult.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="examples\rbnacl.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -359,14 +362,23 @@
     <Target Name="test_scalarmult:Make">
         <MSBuild Projects="examples\test_scalarmult.dproj" Targets="Make"/>
     </Target>
+    <Target Name="rbnacl">
+        <MSBuild Projects="examples\rbnacl.dproj"/>
+    </Target>
+    <Target Name="rbnacl:Clean">
+        <MSBuild Projects="examples\rbnacl.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="rbnacl:Make">
+        <MSBuild Projects="examples\rbnacl.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="test_library_info;test_bytes;test_encoding;test_align_memory;test_pad;test_aead_aegis128l;test_aead_aegis256;test_aead_chacha20poly1305_ietf;test_aead_chacha20poly1305;test_aead_xchacha20poly1305_ietf;test_hash_sha256;test_hash_sha512;test_hash_generichash;test_auth_hmac_sha256;test_auth_hmac_sha512;test_auth_hmac_sha512256;test_auth;test_box;test_sign;test_secretstream;test_kdf_hkdf_sha256;test_kdf_hkdf_sha512;test_kdf;test_kx;test_onetimeauth;test_shorthash;Test_secretbox;test_pwhash;test_scalarmult"/>
+        <CallTarget Targets="test_library_info;test_bytes;test_encoding;test_align_memory;test_pad;test_aead_aegis128l;test_aead_aegis256;test_aead_chacha20poly1305_ietf;test_aead_chacha20poly1305;test_aead_xchacha20poly1305_ietf;test_hash_sha256;test_hash_sha512;test_hash_generichash;test_auth_hmac_sha256;test_auth_hmac_sha512;test_auth_hmac_sha512256;test_auth;test_box;test_sign;test_secretstream;test_kdf_hkdf_sha256;test_kdf_hkdf_sha512;test_kdf;test_kx;test_onetimeauth;test_shorthash;Test_secretbox;test_pwhash;test_scalarmult;rbnacl"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="test_library_info:Clean;test_bytes:Clean;test_encoding:Clean;test_align_memory:Clean;test_pad:Clean;test_aead_aegis128l:Clean;test_aead_aegis256:Clean;test_aead_chacha20poly1305_ietf:Clean;test_aead_chacha20poly1305:Clean;test_aead_xchacha20poly1305_ietf:Clean;test_hash_sha256:Clean;test_hash_sha512:Clean;test_hash_generichash:Clean;test_auth_hmac_sha256:Clean;test_auth_hmac_sha512:Clean;test_auth_hmac_sha512256:Clean;test_auth:Clean;test_box:Clean;test_sign:Clean;test_secretstream:Clean;test_kdf_hkdf_sha256:Clean;test_kdf_hkdf_sha512:Clean;test_kdf:Clean;test_kx:Clean;test_onetimeauth:Clean;test_shorthash:Clean;Test_secretbox:Clean;test_pwhash:Clean;test_scalarmult:Clean"/>
+        <CallTarget Targets="test_library_info:Clean;test_bytes:Clean;test_encoding:Clean;test_align_memory:Clean;test_pad:Clean;test_aead_aegis128l:Clean;test_aead_aegis256:Clean;test_aead_chacha20poly1305_ietf:Clean;test_aead_chacha20poly1305:Clean;test_aead_xchacha20poly1305_ietf:Clean;test_hash_sha256:Clean;test_hash_sha512:Clean;test_hash_generichash:Clean;test_auth_hmac_sha256:Clean;test_auth_hmac_sha512:Clean;test_auth_hmac_sha512256:Clean;test_auth:Clean;test_box:Clean;test_sign:Clean;test_secretstream:Clean;test_kdf_hkdf_sha256:Clean;test_kdf_hkdf_sha512:Clean;test_kdf:Clean;test_kx:Clean;test_onetimeauth:Clean;test_shorthash:Clean;Test_secretbox:Clean;test_pwhash:Clean;test_scalarmult:Clean;rbnacl:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="test_library_info:Make;test_bytes:Make;test_encoding:Make;test_align_memory:Make;test_pad:Make;test_aead_aegis128l:Make;test_aead_aegis256:Make;test_aead_chacha20poly1305_ietf:Make;test_aead_chacha20poly1305:Make;test_aead_xchacha20poly1305_ietf:Make;test_hash_sha256:Make;test_hash_sha512:Make;test_hash_generichash:Make;test_auth_hmac_sha256:Make;test_auth_hmac_sha512:Make;test_auth_hmac_sha512256:Make;test_auth:Make;test_box:Make;test_sign:Make;test_secretstream:Make;test_kdf_hkdf_sha256:Make;test_kdf_hkdf_sha512:Make;test_kdf:Make;test_kx:Make;test_onetimeauth:Make;test_shorthash:Make;Test_secretbox:Make;test_pwhash:Make;test_scalarmult:Make"/>
+        <CallTarget Targets="test_library_info:Make;test_bytes:Make;test_encoding:Make;test_align_memory:Make;test_pad:Make;test_aead_aegis128l:Make;test_aead_aegis256:Make;test_aead_chacha20poly1305_ietf:Make;test_aead_chacha20poly1305:Make;test_aead_xchacha20poly1305_ietf:Make;test_hash_sha256:Make;test_hash_sha512:Make;test_hash_generichash:Make;test_auth_hmac_sha256:Make;test_auth_hmac_sha512:Make;test_auth_hmac_sha512256:Make;test_auth:Make;test_box:Make;test_sign:Make;test_secretstream:Make;test_kdf_hkdf_sha256:Make;test_kdf_hkdf_sha512:Make;test_kdf:Make;test_kx:Make;test_onetimeauth:Make;test_shorthash:Make;Test_secretbox:Make;test_pwhash:Make;test_scalarmult:Make;rbnacl:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

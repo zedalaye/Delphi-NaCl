@@ -491,15 +491,15 @@ class function TBytesHelper.FromBase64(Buf: PByte; var Len: NativeUInt;
   end;
 
 var
-  B64R: RawByteString;
+  B64B: TBytes;
   B64P, B64Err: PAnsiChar;
 begin
-  B64R := RawByteString(Base64);
-  B64P := PAnsiChar(B64R);
+  B64B := TEncoding.ASCII.GetBytes(Base64);
+  B64P := PAnsiChar(@B64B[0]);
 
   Result := sodium_base642bin(
               Buf, Len,
-              B64P, Length(B64R),    // base64 strings does not contain extended characters
+              B64P, Length(B64B),    // base64 strings does not contain extended characters
               PAnsiChar(' '#13#10), // ignore whitespace and newline characters
               Len,
               B64Err,
@@ -513,7 +513,7 @@ begin
     else
       raise EArgumentException.CreateFmt(
         'Invalid Base64 string (unexpected char ''%s'' at pos %d)',
-        [B64Err^, Integer(B64Err - B64P) +1]
+        [B64Err^, (B64Err - B64P) +1]
       );
   end;
 end;
@@ -558,8 +558,8 @@ var
 begin
   V := VariantOption(Variant, Padding);
   SetLength(B64, _SODIUM_BASE64_ENCODED_LEN(Len, V));
-  sodium_bin2base64(@B64[1], Length(B64), @Buf, Len, V);
-  Result := string(B64);
+  sodium_bin2base64(Pointer(B64), Length(B64), @Buf, Len, V);
+  Result := string(PAnsiChar(B64));
 end;
 
 class function TBytesHelper.ToBase64<T>(const Buf: T; Variant: TBase64Variant;
@@ -597,7 +597,7 @@ end;
 
 class function TBytesHelper.IsZero<T>(const Buf: T): Boolean;
 begin
-  Result := sodium_is_zero(@Buf, SizeOf(T)) = 1; // !
+  Result := sodium_is_zero(PByte(@Buf), SizeOf(T)) = 1; // !
 end;
 
 class function TBytesHelper.Zero(Len: NativeUInt): TBytes;
@@ -737,8 +737,8 @@ var
   OutBufLen: NativeUInt;
 begin
   OrgLen := Length(B);
-  OutbufLen := ((NativeUInt(Length(B)) div BlockSize) + 1) * BlockSize;
-  SetLength(B, OutbufLen);
+  OutBufLen := ((NativeUInt(Length(B)) div BlockSize) + 1) * BlockSize;
+  SetLength(B, OutBufLen);
   Result := sodium_pad(OutBufLen, @B[0], OrgLen, BlockSize, OutBufLen) = 0;
   if Result then
     SetLength(B, OutBufLen);
@@ -761,7 +761,7 @@ end;
 
 class procedure TBytesHelper.Inc<T>(var B: T);
 begin
-  sodium_increment(@B, SizeOf(T));
+  sodium_increment(PByte(@B), SizeOf(T));
 end;
 
 class procedure TBytesHelper.Inc(var B: TBytes);
@@ -776,7 +776,7 @@ end;
 
 class procedure TBytesHelper.Add<T>(var A: T; const B: T);
 begin
-  sodium_add(@A, @B, SizeOf(T));
+  sodium_add(PByte(@A), PByte(@B), SizeOf(T));
 end;
 
 class procedure TBytesHelper.Add(var A: TBytes; const B: TBytes);
@@ -792,7 +792,7 @@ end;
 
 class procedure TBytesHelper.Sub<T>(var A: T; const B: T);
 begin
-  sodium_sub(@A, @B, SizeOf(T));
+  sodium_sub(PByte(@A), PByte(@B), SizeOf(T));
 end;
 
 class procedure TBytesHelper.Sub(var A: TBytes; const B: TBytes);
@@ -808,7 +808,7 @@ end;
 
 class function TBytesHelper.Compare<T>(const A, B: T): Integer;
 begin
-  Result := sodium_compare(@A, @B, SizeOf(T));
+  Result := sodium_compare(PByte(@A), PByte(@B), SizeOf(T));
 end;
 
 class function TBytesHelper.Compare(const A, B: TBytes): Integer;

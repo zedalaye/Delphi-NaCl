@@ -11,8 +11,8 @@ const
 
   LIBSODIUM_VERSION_STRING = '1.0.20';
 
-  LIBSODIUM_LIBRARY_VERSION_MAJOR = 28;
-  LIBSODIUM_LIBRARY_VERSION_MINOR = 1;
+  LIBSODIUM_LIBRARY_VERSION_MAJOR = 26;
+  LIBSODIUM_LIBRARY_VERSION_MINOR = 2;
 
 (* sodium/export.h *)
 
@@ -1198,9 +1198,9 @@ const
   _CRYPTO_CORE_ED25519_NONREDUCEDSCALARBYTES = 64;
 function crypto_core_ed25519_nonreducedscalarbytes: NativeUInt; cdecl; external SODIUM_LIB;
 
-const
-  _CRYPTO_CORE_ED25519_H2CSHA256 = 1;
-  _CRYPTO_CORE_ED25519_H2CSHA512 = 2;
+//const
+//  _CRYPTO_CORE_ED25519_H2CSHA256 = 1;
+//  _CRYPTO_CORE_ED25519_H2CSHA512 = 2;
 
 function crypto_core_ed25519_is_valid_point(const p: PByte): Integer; cdecl; external SODIUM_LIB;
 
@@ -1212,13 +1212,15 @@ function crypto_core_ed25519_sub(r: PByte;
 
 function crypto_core_ed25519_from_uniform(p: PByte; const r: PByte): Integer; cdecl; external SODIUM_LIB;
 
-function crypto_core_ed25519_from_string(p: TCryptoCoreEd25519;
-                                         const ctx: PAnsiChar; const msg: PByte;
-                                         msg_len: NativeUInt; hash_alg: Integer): Integer; cdecl; external SODIUM_LIB;
+function crypto_core_ed25519_from_hash(p: PByte; const h: PByte): Integer; cdecl; external SODIUM_LIB;
 
-function crypto_core_ed25519_from_string_ro(p: TCryptoCoreEd25519;
-                                            const ctx: PAnsiChar; const msg: PByte;
-                                            msg_len: NativeUInt; hash_alg: Integer): Integer; cdecl; external SODIUM_LIB;
+//function crypto_core_ed25519_from_string(p: TCryptoCoreEd25519;
+//                                         const ctx: PAnsiChar; const msg: PByte;
+//                                         msg_len: NativeUInt; hash_alg: Integer): Integer; cdecl; external SODIUM_LIB;
+//
+//function crypto_core_ed25519_from_string_ro(p: TCryptoCoreEd25519;
+//                                            const ctx: PAnsiChar; const msg: PByte;
+//                                            msg_len: NativeUInt; hash_alg: Integer): Integer; cdecl; external SODIUM_LIB;
 
 procedure crypto_core_ed25519_random(p: PByte); cdecl; external SODIUM_LIB;
 
@@ -1245,7 +1247,7 @@ procedure crypto_core_ed25519_scalar_mul(z: PByte; const x: PByte;
  *)
 procedure crypto_core_ed25519_scalar_reduce(r: PByte; const s: PByte); cdecl; external SODIUM_LIB;
 
-function crypto_core_ed25519_scalar_is_canonical(const s: PByte): Integer; cdecl; external SODIUM_LIB;
+//function crypto_core_ed25519_scalar_is_canonical(const s: PByte): Integer; cdecl; external SODIUM_LIB;
 
 (* sodium/crypto_core_hchacha20.h *)
 
@@ -2049,27 +2051,27 @@ function crypto_box_seal_open(m: PByte; const c: PByte;
 
 const
   _CRYPTO_BOX_ZEROBYTES = _CRYPTO_BOX_CURVE25519XSALSA20POLY1305_ZEROBYTES;
-function crypto_box_zerobytes: NativeUInt; cdecl; external SODIUM_LIB; deprecated;
+function crypto_box_zerobytes: NativeUInt; cdecl; external SODIUM_LIB;
 
 const
   _CRYPTO_BOX_BOXZEROBYTES = _CRYPTO_BOX_CURVE25519XSALSA20POLY1305_BOXZEROBYTES;
-function crypto_box_boxzerobytes: NativeUInt; cdecl; external SODIUM_LIB; deprecated;
+function crypto_box_boxzerobytes: NativeUInt; cdecl; external SODIUM_LIB;
 
 function crypto_box(c: PByte; const m: PByte;
                     mlen: UInt64; const n: PByte;
-                    const pk: PByte; const sk: PByte): Integer; cdecl; external SODIUM_LIB; deprecated;
+                    const pk: PByte; const sk: PByte): Integer; cdecl; external SODIUM_LIB;
 
 function crypto_box_open(m: PByte; const c: PByte;
                          clen: UInt64; const n: PByte;
-                         const pk: PByte; const sk: PByte): Integer; cdecl; external SODIUM_LIB; deprecated;
+                         const pk: PByte; const sk: PByte): Integer; cdecl; external SODIUM_LIB;
 
 function crypto_box_afternm(c: PByte; const m: PByte;
                             mlen: UInt64; const n: PByte;
-                            const k: PByte): Integer; cdecl; external SODIUM_LIB; deprecated;
+                            const k: PByte): Integer; cdecl; external SODIUM_LIB;
 
 function crypto_box_open_afternm(m: PByte; const c: PByte;
                                  clen: UInt64; const n: PByte;
-                                 const k: PByte): Integer; cdecl; external SODIUM_LIB; deprecated;
+                                 const k: PByte): Integer; cdecl; external SODIUM_LIB;
 
 (* sodium/crypto_kdf_blake2b.h *)
 
