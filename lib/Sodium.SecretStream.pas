@@ -174,7 +174,7 @@ begin
   OutStream.Write(Header, SizeOf(Header));
 
   repeat
-    InBytes := InStream.Read(InBuf, CHUNK_SIZE);
+    InBytes := InStream.Read(InBuf, SizeOf(InBuf));
     EOS := InStream.Position >= InStream.Size;
 
     if EOS then
@@ -218,7 +218,7 @@ begin
     Exit(False);
 
   repeat
-    InBytes := InStream.Read(InBuf, CHUNK_SIZE);
+    InBytes := InStream.Read(InBuf, SizeOf(InBuf));
     EOS := InStream.Position >= InStream.Size;
 
     if crypto_secretstream_xchacha20poly1305_pull(
