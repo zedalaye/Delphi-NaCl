@@ -1977,8 +1977,8 @@ const
 function crypto_box_primitive: PAnsiChar; cdecl; external SODIUM_LIB;
 
 type
-  TCryptoBoxPublicKey = array[0.._CRYPTO_BOX_PUBLICKEYBYTES] of Byte;
-  TCryptoBoxSecretKey = array[0.._CRYPTO_BOX_SECRETKEYBYTES] of Byte;
+  TCryptoBoxPublicKey = array[0.._CRYPTO_BOX_PUBLICKEYBYTES -1] of Byte;
+  TCryptoBoxSecretKey = array[0.._CRYPTO_BOX_SECRETKEYBYTES -1] of Byte;
 
 function crypto_box_seed_keypair(pk: PByte; sk: PByte;
                                  const seed: PByte): Integer; cdecl; external SODIUM_LIB;
