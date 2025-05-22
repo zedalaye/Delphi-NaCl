@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{46DD6439-9793-47A0-AB95-5AAA5309D4C5}</ProjectGuid>
-        <ProjectVersion>20.2</ProjectVersion>
+        <ProjectVersion>20.3</ProjectVersion>
         <FrameworkType>None</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
@@ -12,11 +12,6 @@
         <MainSource>rbnacl.dpr</MainSource>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
-        <Base>true</Base>
-    </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='Linux64' and '$(Base)'=='true') or '$(Base_Linux64)'!=''">
-        <Base_Linux64>true</Base_Linux64>
-        <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
@@ -57,9 +52,6 @@
         <SanitizedProjectName>rbnacl</SanitizedProjectName>
         <VerInfo_Locale>1036</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Base_Linux64)'!=''">
-        <DCC_UsePackage>bindengine;FMXfrCoreLibrary29;dbxcds;FMXfrLanguageLatvian29;FMXfrLanguageDutch29;FMXfsTee29;dbexpress;inet;FMXfrLanguageTurkish29;CustomIPTransport;FireDACMSSQLDriver;FMXfrLanguageCzech29;FMXfsADO29;FireDACODBCDriver;emsserverresource;rtl;FMXfrLanguageGerman29;FMXfrLanguageBrazil229;FireDAC;xmlrtl;dsnap;FireDACDb2Driver;FMXfrLanguageFrench29;DatasnapConnectorsFreePascal;FMXfrLanguageArabic29;FMXfrLanguageItalian29;FMXfrLanguageSpanish29;FireDACASADriver;FireDACInfxDriver;FMXfs29;DataSnapCommon;FMXfrLanguageFarsi29;FMXfrLanguageChinese29;FMXfrLanguageJapanese29;DataSnapIndy10ServerTransport;FMXfrLanguageCatalon29;FMXfrLanguageHungarian29;inetstn;FMXfrLanguageDanish29;FMXfrLanguageSlovene29;DataSnapClient;FMXfrLanguageSwedish29;emsclientfiredac;FireDACPgDriver;FMXfrLanguageBrazil29;CloudService;FMXfrLocalizationLibrary29;FMXfrLanguageRomanian29;soapserver;FireDACIBDriver;DataSnapServer;fmx;DbxCommonDriver;FMXfrLanguageSlovak29;FireDACCommonODBC;emsclient;IndyProtocols;FMXfrLanguageUkrainian29;FireDACSqliteDriver;DbxClientDriver;soapmidas;FMXfrLanguageSwiss29;FMXfrLanguageBrazil129;FMXfsDB29;IndySystem;FMXfrLanguagePolish29;FireDACCommon;DataSnapServerMidas;FMXfrLanguageLithuanian29;FireDACMySQLDriver;DataSnapFireDAC;FMXfrLanguageRussian29;DataSnapNativeClient;FMXfrLanguageHebrew29;FMXfrLanguageCroatian29;FMXfrLanguageBulgarian29;emshosting;FireDACCommonDriver;emsedge;inetdb;dbrtl;FireDACOracleDriver;FMXfrLanguageTaiwan29;FMXfrLanguagePortuguese29;DataSnapConnectors;FireDACMongoDBDriver;FireDACTDataDriver;bindcomp;IndyCore;RESTBackendComponents;FireDACADSDriver;RESTComponents;dsnapxml;FMXfrLanguageSerbian29;FMXfrLanguageIndonesian29;FMXfrLanguageGreek29;soaprtl;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_UsePackage>vclie;bindengine;IndyIPCommon;FMXfrCoreLibrary29;dbxcds;vcledge;frLanguageSlovak29;FMXTeeDB929;FMXfrLanguageLatvian29;FMXfrLanguageDutch29;JvAppFrm;JclVcl;frLanguageArabic29;FMXfsTee29;Jcl;dbexpress;JvManagedThreads;KbmRESTR;frLanguageCatalon29;frLanguageCzech29;inet;vcltouch;FireDACDBXDriver;FMXTeeImport929;FMXfrLanguageTurkish29;CustomIPTransport;FireDACMSSQLDriver;JvSystem;FMXfrLanguageCzech29;frLanguageItalian29;frxPDF29;JvCrypt;madExcept_;FMXfsADO29;frxe29;VirtualTreesR;fsDB29;vclFireDAC;FMXTeeLanguage929;FireDACODBCDriver;emsserverresource;frLanguageDanish29;PrYComponentsR;frxTee29;rtl;TeeGL929;FMXfrLanguageGerman29;frLanguageLithuanian29;DBXSqliteDriver;frLanguageRussian29;DBXSybaseASEDriver;JvRuntimeDesign;JvXPCtrls;FMXfrLanguageBrazil229;inetdbxpress;FireDAC;JvDocking;xmlrtl;TeeImport929;dsnap;JvCmp;frLanguageSerbian29;FireDACDb2Driver;DBXOracleDriver;FMXfrLanguageFrench29;TeeTree2D29Tee9;DatasnapConnectorsFreePascal;frControlsLibrary29;frxQueryBuilder29;frxIntIOIndy29;fqbADO29;frLocalizationLibrary29;bindcompvclwinx;FMXfrLanguageArabic29;bindcompfmx;TMSVCLUIPackPkgExDXE15;madBasic_;frLanguageGerman29;JvBands;FMXfrLanguageItalian29;frLanguageIndonesian29;FMXfrLanguageSpanish29;FireDACASADriver;vclactnband;TMSVCLUIPackPkgXlsDXE15;TeeWorld929;FireDACInfxDriver;DBXMySQLDriver;FMXfs29;fsADO29;VclSmp;DataSnapCommon;fmxase;FMXfrLanguageFarsi29;JvPluginSystem;TMSVCLUIPackPkgWizDXE15;FMXfrLanguageChinese29;frxcs29;FMXfrLanguageJapanese29;frLanguageSlovene29;DataSnapIndy10ServerTransport;JclDeveloperTools;frADODataLibrary29;vcldsnap;DBXInterBaseDriver;JvWizards;cocinasync;frLanguageBrazil129;vcldb;FMXfrLanguageCatalon29;FMXfrLanguageHungarian29;JvCore;inetstn;frxIntIO29;frLanguageJapanese29;TeeLanguage929;FMXfrLanguageDanish29;JvDotNetCtrls;vcl;JvHMI;FMXfrLanguageSlovene29;DataSnapClient;fsFD29;IcsVclNewRun;FmxTeeUI929;FMXfrLanguageSwedish29;frLanguageDutch29;emsclientfiredac;FireDACPgDriver;FireDACDSDriver;JvPrintPreview;fqbSM29;tethering;JvStdCtrls;frLanguageBulgarian29;bindcompvcl;FMXfrLanguageBrazil29;CloudService;Img32_VCL_Dsgn;FMXfrLocalizationLibrary29;frGraphicsLibrary29;Ape;FMXfrLanguageRomanian29;soapserver;FireDACIBDriver;vclwinx;DataSnapServer;fs29;fmx;TeePro929;DbxCommonDriver;VCLRESTComponents;FMXfrLanguageSlovak29;FireDACCommonODBC;DBXMSSQLDriver;emsclient;fsTee29;appanalytics;IndyProtocols;vclx;Skia.Package.RTL;frxADOQueryBuilder29;frLanguageHungarian29;FMXfrLanguageUkrainian29;DBXFirebirdDriver;FireDACSqliteDriver;DbxClientDriver;soapmidas;frCoreLibrary29;frxFDQueryBuilder29;frLanguageBrazil29;FMXfrLanguageSwiss29;UIBR;Tee929;JvDB;TeeImage929;fmxdae;JvCustom;FMXfrLanguageBrazil129;JvControls;FMXfsDB29;fqbFD29;frLanguageSwiss29;JvJans;JvMM;IndySystem;frLanguageSwedish29;JvGlobus;FMXfrLanguagePolish29;JclContainers;frLanguageUkrainian29;JvPageComps;madDisAsm_;FireDACCommon;DataSnapServerMidas;bindcompdbx;FMXfrLanguageLithuanian29;FireDACMySQLDriver;fqb29;Img32_Library;IcsCommonNewRun;frLanguageFrench29;TMSVCLUIPackPkgDXE15;frxSM29;vclimg;DataSnapFireDAC;JvDlgs;frFDDataLibrary29;FMXfrLanguageRussian29;DBXInformixDriver;frLanguageFarsi29;fmxobj;bindcompvclsmp;DataSnapNativeClient;frx29;FMXfrLanguageHebrew29;FMXfrLanguageCroatian29;frLanguageChinese29;frLanguageHebrew29;FMXfrLanguageBulgarian29;FMXTeePro929;emshosting;frxDB29;fqbDBX29;FireDACCommonDriver;IndyIPClient;frxHTML29;frLanguageTaiwan29;emsedge;TeeDB929;frxDBXQueryBuilder29;frLanguageRomanian29;inetdb;frLanguageBrazil229;fmxFireDAC;frLanguageCroatian29;kbmMemRunDStd;JvPascalInterpreter;DBXOdbcDriver;JvTimeFramework;dbrtl;FMXTee929;FireDACOracleDriver;Skia.Package.FMX;FMXfrLanguageTaiwan29;FMXfrLanguagePortuguese29;FireDACMSAccDriver;PasLibVlcPlayer;DataSnapConnectors;frLanguageTurkish29;frLanguageGreek29;FireDACMongoDBDriver;TeeUI929;FireDACTDataDriver;Skia.Package.VCL;TiersR;bindcomp;frLanguageLatvian29;IndyCore;RESTBackendComponents;frLanguageSpanish29;FMXTree29;frSmartMemo29;FireDACADSDriver;frxFD29;RESTComponents;IndyIPServer;dsnapxml;adortl;dsnapcon;DataSnapProviderClient;FMXfrLanguageSerbian29;frxADO29;DBXDb2Driver;FMXfrLanguageIndonesian29;frLanguagePortuguese29;frLanguagePolish29;frxDBX29;DBXSybaseASADriver;FMXfrLanguageGreek29;CxLibR;soaprtl;JvNet;$(DCC_UsePackage)</DCC_UsePackage>
@@ -265,6 +257,16 @@
                     </Platform>
                     <Platform Name="Android64">
                         <RemoteDir>res\values-v31</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidSplashStylesV35">
+                    <Platform Name="Android">
+                        <RemoteDir>res\values-v35</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>res\values-v35</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -1096,7 +1098,6 @@
                 <ProjectRoot Platform="Win64x" Name="$(PROJECTNAME)"/>
             </Deployment>
             <Platforms>
-                <Platform value="Linux64">False</Platform>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">False</Platform>
             </Platforms>
