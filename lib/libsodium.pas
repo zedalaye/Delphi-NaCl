@@ -9,10 +9,10 @@ interface
 const
   SODIUM_LIB = 'libsodium.dll';
 
-  LIBSODIUM_VERSION_STRING = '1.0.20';
+  LIBSODIUM_VERSION_STRING = '1.0.21';
 
   LIBSODIUM_LIBRARY_VERSION_MAJOR = 26;
-  LIBSODIUM_LIBRARY_VERSION_MINOR = 2;
+  LIBSODIUM_LIBRARY_VERSION_MINOR = 3;
 
 (* sodium/export.h *)
 
@@ -98,6 +98,16 @@ function sodium_base642bin(bin: PByte; const bin_maxlen: NativeUInt;
                            const ignore: PAnsiChar; var bin_len: NativeUInt;
                            var b64end: PAnsiChar; const variant: Integer): Integer; cdecl; external SODIUM_LIB;
 
+const
+  SODIUM_IPCRYPT_BINBYTES = 16;
+
+type
+  TCryptoIpBin = array[0..SODIUM_IPCRYPT_BINBYTES -1] of Byte;
+
+function sodium_ip2bin(var bin: TCryptoIpBin; const ip: PAnsiChar; ip_len: NativeUInt): Integer; cdecl; external SODIUM_LIB;
+
+function sodium_bin2ip(ip: PAnsiChar; ip_maxlen: NativeUInt; const bin: TCryptoIpBin): PAnsiChar; cdecl; external SODIUM_LIB;
+
 function sodium_mlock(addr: Pointer; const len: NativeUInt): Integer; cdecl; external SODIUM_LIB;
 
 function sodium_munlock(addr: Pointer; const len: NativeUInt): Integer; cdecl; external SODIUM_LIB;
@@ -106,33 +116,33 @@ function sodium_munlock(addr: Pointer; const len: NativeUInt): Integer; cdecl; e
  * allocation functions.
  *
  * They return a pointer to a region filled with 0xd0 bytes, immediately
- * followed by a guard page.
- * As a result, accessing a single byte after the requested allocation size
- * will intentionally trigger a segmentation fault.
+ * followed by a guard page. As a result, accessing a single byte after the
+ * requested allocation size will intentionally trigger a segmentation fault.
  *
  * A canary and an additional guard page placed before the beginning of the
  * region may also kill the process if a buffer underflow is detected.
  *
  * The memory layout is:
  * [unprotected region size (read only)][guard page (no access)][unprotected pages (read/write)][guard page (no access)]
- * With the layout of the unprotected pages being:
+ *
+ * The layout of the unprotected pages is:
  * [optional padding][16-bytes canary][user region]
  *
- * However:
- * - These functions are significantly slower than standard functions
- * - Each allocation requires 3 or 4 additional pages
+ * Important limitations:
+ * - These functions are significantly slower than standard allocation functions.
+ * - Each allocation requires 3 or 4 additional pages.
  * - The returned address will not be aligned if the allocation size is not
  *   a multiple of the required alignment. For this reason, these functions
- *   are designed to store data, such as secret keys and messages.
+ *   are designed to store data such as secret keys and messages.
  *
  * sodium_malloc() can be used to allocate any libsodium data structure.
  *
  * The crypto_generichash_state structure is packed and its length is
- * either 357 or 361 bytes. For this reason, when using sodium_malloc() to
- * allocate a crypto_generichash_state structure, padding must be added in
- * order to ensure proper alignment. crypto_generichash_statebytes()
- * returns the rounded up structure size, and should be preferred to sizeof():
- * state = sodium_malloc(crypto_generichash_statebytes());
+ * either 357 or 361 bytes. When using sodium_malloc() to allocate a
+ * crypto_generichash_state structure, padding must be added to ensure
+ * proper alignment. Use crypto_generichash_statebytes() rather than sizeof():
+ *
+ *     state = sodium_malloc(crypto_generichash_statebytes());
  *)
 
 function sodium_malloc(const size: NativeUInt): Pointer; cdecl; external SODIUM_LIB;
@@ -147,11 +157,11 @@ function sodium_mprotect_readonly(ptr: Pointer): Integer; cdecl; external SODIUM
 
 function sodium_mprotect_readwrite(ptr: Pointer): Integer; cdecl; external SODIUM_LIB;
 
-function sodium_pad(var padded_buflen_p: NativeUInt; buf: PByte;
-                    unpadded_buflen, blocksize, max_buflen: NativeUInt): Integer; cdecl; external SODIUM_LIB;
+function sodium_pad(var padded_buflen_p: NativeUInt; buf: PByte; unpadded_buflen,
+                    blocksize, max_buflen: NativeUInt): Integer; cdecl; external SODIUM_LIB;
 
-function sodium_unpad(var unpadded_buflen_p: NativeUInt; const buf: PByte;
-                      padded_buflen, blocksize: NativeUInt): Integer; cdecl; external SODIUM_LIB;
+function sodium_unpad(var unpadded_buflen_p: NativeUInt; const buf: PByte; padded_buflen,
+                      blocksize: NativeUInt): Integer; cdecl; external SODIUM_LIB;
 
 (* sodium/randombytes.h *)
 
@@ -772,7 +782,7 @@ type
 (* sodium/crypto_hash_sha256.h *)
 
 (*
- * WARNING: Unless you absolutely need to use SHA256 for interoperability,
+ * WARNING: Unless you absolutely need to use SHA256 for interoperability
  * purposes, you might want to consider crypto_generichash() instead.
  * Unlike SHA256, crypto_generichash() is not vulnerable to length
  * extension attacks.
@@ -809,7 +819,7 @@ type
 (* sodium/crypto_hash_sha512.h *)
 
 (*
- * WARNING: Unless you absolutely need to use SHA256 for interoperability,
+ * WARNING: Unless you absolutely need to use SHA256 for interoperability
  * purposes, you might want to consider crypto_generichash() instead.
  * Unlike SHA512, crypto_generichash() is not vulnerable to length
  * extension attacks.
@@ -1166,12 +1176,12 @@ function crypto_auth_verify(const h: PByte; const &in: PByte;
                             inlen: UInt64; const k: PByte): Integer; cdecl; external SODIUM_LIB;
 
 type
-  TCryptoAuthKey = array[0.._crypto_auth_KEYBYTES -1] of Byte;
+  TCryptoAuthKey = array[0.._CRYPTO_AUTH_KEYBYTES -1] of Byte;
 
 procedure crypto_auth_keygen(var k: TCryptoAuthKey); cdecl; external SODIUM_LIB;
 
 type
-  TCryptoAuthHash = array[0.._crypto_auth_BYTES -1] of Byte;
+  TCryptoAuthHash = array[0.._CRYPTO_AUTH_BYTES -1] of Byte;
 
 (* sodium/crypto_core_ed25519.h *)
 
@@ -1210,6 +1220,10 @@ function crypto_core_ed25519_add(r: PByte;
 function crypto_core_ed25519_sub(r: PByte;
                                  const p: PByte; const q: PByte): Integer; cdecl; external SODIUM_LIB;
 
+(*
+ * Removal notice: this function is undocumented and has been marked as
+ * deprecated since 2019. It will be removed. Bindings should not refer to it.
+ *)
 function crypto_core_ed25519_from_uniform(p: PByte; const r: PByte): Integer; cdecl; external SODIUM_LIB;
 
 function crypto_core_ed25519_from_hash(p: PByte; const h: PByte): Integer; cdecl; external SODIUM_LIB;
@@ -1248,6 +1262,29 @@ procedure crypto_core_ed25519_scalar_mul(z: PByte; const x: PByte;
 procedure crypto_core_ed25519_scalar_reduce(r: PByte; const s: PByte); cdecl; external SODIUM_LIB;
 
 //function crypto_core_ed25519_scalar_is_canonical(const s: PByte): Integer; cdecl; external SODIUM_LIB;
+
+(* sodium/crypto_core_keccak1600.h *)
+
+type
+  TCryptoCoreKeccak1600State = record
+    opaque: array[0..22-1] of Byte;
+  end;
+
+function crypto_core_keccak1600_statebytes(): NativeUInt; cdecl; external SODIUM_LIB;
+
+procedure crypto_core_keccak1600_init(var state: TCryptoCoreKeccak1600State); cdecl; external SODIUM_LIB;
+
+procedure crypto_core_keccak1600_xor_bytes(var state: TCryptoCoreKeccak1600State;
+                                           const bytes: PByte;
+                                           offset, length: NativeUInt); cdecl; external SODIUM_LIB;
+
+procedure crypto_core_keccak1600_extract_bytes(const state: TCryptoCoreKeccak1600State;
+                                               bytes: PByte;
+                                               offset, length: NativeUInt); cdecl; external SODIUM_LIB;
+
+procedure crypto_core_keccak1600_permute_24(var state: TCryptoCoreKeccak1600State); cdecl; external SODIUM_LIB;
+
+procedure crypto_core_keccak1600_permute_12(var state: TCryptoCoreKeccak1600State); cdecl; external SODIUM_LIB;
 
 (* sodium/crypto_core_hchacha20.h *)
 
@@ -1463,7 +1500,7 @@ function crypto_stream_chacha20(c: PByte; clen: UInt64;
 
 function crypto_stream_chacha20_xor(c: PByte; const m: PByte;
                                     mlen: UInt64; const n: PByte;
-                                    const k: PByte): Integer; cdecl; external SODIUM_LIB;
+                                    [ref] const k: PByte): Integer; cdecl; external SODIUM_LIB;
 
 function crypto_stream_chacha20_xor_ic(c: PByte; const m: PByte;
                                        mlen: UInt64;
@@ -1486,7 +1523,7 @@ const
 function crypto_stream_chacha20_ietf_noncebytes: NativeUInt; cdecl; external SODIUM_LIB;
 
 type
-  TCryptoStreamChacha20IetfNonce = array[0.._crypto_stream_chacha20_ietf_NONCEBYTES -1] of Byte;
+  TCryptoStreamChacha20IetfNonce = array[0.._CRYPTO_STREAM_CHACHA20_IETF_NONCEBYTES -1] of Byte;
 
 function _CRYPTO_STREAM_CHACHA20_IETF_MESSAGEBYTES_MAX: UInt64; inline;
 function crypto_stream_chacha20_ietf_messagebytes_max: NativeUInt; cdecl; external SODIUM_LIB;
@@ -2072,6 +2109,118 @@ function crypto_box_afternm(c: PByte; const m: PByte;
 function crypto_box_open_afternm(m: PByte; const c: PByte;
                                  clen: UInt64; const n: PByte;
                                  const k: PByte): Integer; cdecl; external SODIUM_LIB;
+
+(* sodium/crypto_ipcrypt.h *)
+
+const
+  _CRYPTO_IPCRYPT_BYTES = 16;
+function crypto_ipcrypt_bytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_IPCRYPT_KEYBYTES = 16;
+function crypto_ipcrypt_keybytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_IPCRYPT_ND_KEYBYTES = 16;
+function crypto_ipcrypt_nd_keybytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_IPCRYPT_ND_TWEAKBYTES = 8;
+function crypto_ipcrypt_nd_tweakbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_IPCRYPT_ND_INPUTBYTES = SODIUM_IPCRYPT_BINBYTES;
+function crypto_ipcrypt_nd_inputbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_IPCRYPT_ND_OUTPUTBYTES = 24;
+function crypto_ipcrypt_nd_outputbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_IPCRYPT_NDX_KEYBYTES = 32;
+function crypto_ipcrypt_ndx_keybytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_IPCRYPT_NDX_TWEAKBYTES = 16;
+function crypto_ipcrypt_ndx_tweakbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_IPCRYPT_NDX_INPUTBYTES = SODIUM_IPCRYPT_BINBYTES;
+function crypto_ipcrypt_ndx_inputbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_IPCRYPT_NDX_OUTPUTBYTES = 32;
+function crypto_ipcrypt_ndx_outputbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_IPCRYPT_PFX_KEYBYTES = 32;
+function crypto_ipcrypt_pfx_keybytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_IPCRYPT_PFX_BYTES = 16;
+function crypto_ipcrypt_pfx_bytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoIpCryptKey = array[0.._CRYPTO_IPCRYPT_KEYBYTES -1] of Byte;
+  TCryptoIpCrypt    = array[0.._CRYPTO_IPCRYPT_BYTES -1] of Byte;
+
+procedure crypto_ipcrypt_keygen(var k: TCryptoIpCryptKey); cdecl; external SODIUM_LIB;
+
+type
+  TCryptoIpCryptNdKey   = array[0.._CRYPTO_IPCRYPT_ND_KEYBYTES -1] of Byte;
+  TCryptoIpCryptNd      = array[0.._CRYPTO_IPCRYPT_ND_OUTPUTBYTES -1] of Byte;
+  // TCryptoIpCryptNdInput = array[0.._CRYPTO_IPCRYPT_ND_INPUTBYTES -1] of Byte; { -> TCryptoIpBin }
+  TCryptoIpCryptNdTweak = array[0.._CRYPTO_IPCRYPT_ND_TWEAKBYTES -1] of Byte;
+
+procedure crypto_ipcrypt_nd_keygen(var k: TCryptoIpCryptNdKey); cdecl; external SODIUM_LIB;
+
+type
+  TCryptoIpCryptNdxKey   = array[0.._CRYPTO_IPCRYPT_NDX_KEYBYTES -1] of Byte;
+  TCryptoIpCryptNdx      = array[0.._CRYPTO_IPCRYPT_NDX_OUTPUTBYTES -1] of Byte;
+  // TCryptoIpCryptNdxInput = array[0.._CRYPTO_IPCRYPT_NDX_INPUTBYTES -1] of Byte; { -> TCryptoIpBin }
+  TCryptoIpCryptNdxTweak = array[0.._CRYPTO_IPCRYPT_NDX_TWEAKBYTES -1] of Byte;
+
+procedure crypto_ipcrypt_ndx_keygen(var k: TCryptoIpCryptNdxKey); cdecl; external SODIUM_LIB;
+
+type
+  TCryptoIpCryptPfxKey = array[0.._CRYPTO_IPCRYPT_PFX_KEYBYTES -1] of Byte;
+  TCryptoIpCryptPfx    = array[0.._CRYPTO_IPCRYPT_PFX_BYTES -1] of Byte;
+
+procedure crypto_ipcrypt_pfx_keygen(var k: TCryptoIpCryptPfxKey); cdecl; external SODIUM_LIB;
+
+procedure crypto_ipcrypt_encrypt(var &out: TCryptoIpCrypt;
+                                 const &in: TCryptoIpBin;
+                                 const k: TCryptoIpCryptKey); cdecl; external SODIUM_LIB;
+
+procedure crypto_ipcrypt_decrypt(var &out: TCryptoIpBin;
+                                 const &in: TCryptoIpCrypt;
+                                 const k: TCryptoIpCryptKey); cdecl; external SODIUM_LIB;
+
+procedure crypto_ipcrypt_nd_encrypt(var &out: TCryptoIpCryptNd;
+                                    const &in: TCryptoIpBin;
+                                    const t: TCryptoIpCryptNdTweak;
+                                    const k: TCryptoIpCryptNdKey); cdecl; external SODIUM_LIB;
+
+procedure crypto_ipcrypt_nd_decrypt(var &out: TCryptoIpBin;
+                                    const &in: TCryptoIpCryptNd;
+                                    const k: TCryptoIpCryptNdKey); cdecl; external SODIUM_LIB;
+
+procedure crypto_ipcrypt_ndx_encrypt(var &out: TCryptoIpCryptNdx;
+                                     const &in: TCryptoIpBin;
+                                     const t: TCryptoIpCryptNdxTweak;
+                                     const k: TCryptoIpCryptNdxKey); cdecl; external SODIUM_LIB;
+
+procedure crypto_ipcrypt_ndx_decrypt(var &out: TCryptoIpBin;
+                                     const &in: TCryptoIpCryptNdx;
+                                     const k: TCryptoIpCryptNdxKey); cdecl; external SODIUM_LIB;
+
+procedure crypto_ipcrypt_pfx_encrypt(var &out: TCryptoIpCryptPfx;
+                                     const &in: TCryptoIpBin;
+                                     const k: TCryptoIpCryptPfxKey); cdecl; external SODIUM_LIB;
+
+procedure crypto_ipcrypt_pfx_decrypt(var &out: TCryptoIpBin;
+                                     const &in: TCryptoIpCryptPfx;
+                                     const k: TCryptoIpCryptPfxKey); cdecl; external SODIUM_LIB;
 
 (* sodium/crypto_kdf_blake2b.h *)
 
@@ -3226,7 +3375,7 @@ function crypto_sign_ed25519_detached(sig: PByte;
 
 function crypto_sign_ed25519_verify_detached(const sig: PByte;
                                              const m: PByte;
-                                             mlen: PByte;
+                                             mlen: UInt64;
                                              const pk: PByte): Integer; cdecl; external SODIUM_LIB;
 
 function crypto_sign_ed25519_keypair(pk: PByte; sk: PByte): Integer; cdecl; external SODIUM_LIB;
@@ -3400,6 +3549,152 @@ const
 function crypto_verify_64_bytes: NativeUInt; cdecl; external SODIUM_LIB;
 
 function crypto_verify_64(const x: PByte; const y: PByte): Integer; cdecl; external SODIUM_LIB;
+
+(* sodium/crypto_xof_shake128.h *)
+
+const
+  _CRYPTO_XOF_SHAKE128_BLOCKBYTES = 168;
+function crypto_xof_shake128_blockbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_XOF_SHAKE128_STATEBYTES = 256;
+function crypto_xof_shake128_statebytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_XOF_SHAKE128_DOMAIN_STANDARD = $1F;
+function crypto_xof_shake128_domain_standard: Byte; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoXofShake128State = record
+    opaque: array[0..256 -1] of Byte;
+  end;
+
+(* One-shot API *)
+function crypto_xof_shake128(&out: PByte; outlen: NativeUInt; const &in: PByte;
+                             inlen: UInt64): Integer; cdecl; external SODIUM_LIB;
+
+(* Streaming API with standard domain *)
+function crypto_xof_shake128_init(var state: TCryptoXofShake128State): Integer; cdecl; external SODIUM_LIB;
+
+(* Streaming API with custom domain *)
+function crypto_xof_shake128_init_with_domain(var state: TCryptoXofShake128State;
+                                              domain: Byte): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_xof_shake128_update(var state: TCryptoXofShake128State;
+                                    const &in: PByte;
+                                    inlen: UInt64): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_xof_shake128_squeeze(var state: TCryptoXofShake128State; &out: PByte;
+                                     outlen: NativeUInt): Integer; cdecl; external SODIUM_LIB;
+
+(* sodium/crypto_xof_shake256.h *)
+
+const
+  _CRYPTO_XOF_SHAKE256_BLOCKBYTES = 136;
+function crypto_xof_shake256_blockbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_XOF_SHAKE256_STATEBYTES = 256;
+function crypto_xof_shake256_statebytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_XOF_SHAKE256_DOMAIN_STANDARD = $1F;
+function crypto_xof_shake256_domain_standard: Byte; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoXofShake256State = record
+    opaque: array[0..256 -1] of Byte;
+  end;
+
+(* One-shot API *)
+function crypto_xof_shake256(&out: PByte; outlen: NativeUInt; const &in: PByte;
+                             inlen: UInt64): Integer; cdecl; external SODIUM_LIB;
+
+(* Streaming API with standard domain *)
+function crypto_xof_shake256_init(var state: TCryptoXofShake256State): Integer; cdecl; external SODIUM_LIB;
+
+(* Streaming API with custom domain *)
+function crypto_xof_shake256_init_with_domain(var state: TCryptoXofShake256State; domain: Byte): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_xof_shake256_update(var state: TCryptoXofShake256State;
+                                    const &in: PByte;
+                                    inlen: UInt64): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_xof_shake256_squeeze(var state: TCryptoXofShake256State; &out: PByte; outlen: NativeUInt): Integer; cdecl; external SODIUM_LIB;
+
+(* sodium/crypto_xof_turboshake128.h *)
+
+const
+  _CRYPTO_XOF_TURBOSHAKE128_BLOCKBYTES = 168;
+function crypto_xof_turboshake128_blockbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_XOF_TURBOSHAKE128_STATEBYTES = 256;
+function crypto_xof_turboshake128_statebytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_XOF_TURBOSHAKE128_DOMAIN_STANDARD = $1F;
+function crypto_xof_turboshake128_domain_standard: Byte; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoXofTurboShake128State = record
+    opaque: array[0..256 -1] of Byte;
+  end;
+
+(* One-shot API *)
+function crypto_xof_turboshake128(&out: PByte; outlen: NativeUInt; const &in: PByte;
+                                  inlen: UInt64): Integer; cdecl; external SODIUM_LIB;
+
+(* Streaming API with standard domain *)
+function crypto_xof_turboshake128_init(var state: TCryptoXofTurboShake128State): Integer; cdecl; external SODIUM_LIB;
+
+(* Streaming API with custom domain *)
+function crypto_xof_turboshake128_init_with_domain(var state: TCryptoXofTurboShake128State;
+                                                   domain: Byte): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_xof_turboshake128_update(var state: TCryptoXofTurboShake128State;
+                                         const &in: PByte;
+                                         inlen: UInt64): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_xof_turboshake128_squeeze(var state: TCryptoXofTurboShake128State; &out: PByte;
+                                          outlen: NativeUInt): Integer; cdecl; external SODIUM_LIB;
+
+(* sodium/crypto_xof_turboshake256.h *)
+
+const
+  _CRYPTO_XOF_TURBOSHAKE256_BLOCKBYTES = 136;
+function crypto_xof_turboshake256_blockbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_XOF_TURBOSHAKE256_STATEBYTES = 256;
+function crypto_xof_turboshake256_statebytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_XOF_TURBOSHAKE256_DOMAIN_STANDARD = $1F;
+function crypto_xof_turboshake256_domain_standard: Byte; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoXofTurboShake256State = record
+    opaque: array[0..256 -1] of Byte;
+  end;
+
+(* One-shot API *)
+function crypto_xof_turboshake256(&out: PByte; outlen: NativeUInt; const &in: PByte;
+                                  inlen: UInt64): Integer; cdecl; external SODIUM_LIB;
+
+(* Streaming API with standard domain *)
+function crypto_xof_turboshake256_init(var state: TCryptoXofTurboShake256State): Integer; cdecl; external SODIUM_LIB;
+
+(* Streaming API with custom domain *)
+function crypto_xof_turboshake256_init_with_domain(var state: TCryptoXofTurboShake256State;
+                                                   domain: Byte): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_xof_turboshake256_update(var state: TCryptoXofTurboShake256State;
+                                         const &in: PByte;
+                                         inlen: UInt64): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_xof_turboshake256_squeeze(var state: TCryptoXofTurboShake256State; &out: PByte;
+                                          outlen: NativeUInt): Integer; cdecl; external SODIUM_LIB;
 
 implementation
 

@@ -165,6 +165,13 @@ type
     class function Compare<T>(const A: T; const B: T): Integer; overload; static;
   end;
 
+  TSodiumIp = record
+    class function ToBin(const Ip: string; var Bin: TCryptoIpBin): Boolean; static;
+
+    class function ToIp(const Bin: TCryptoIpBin): string; overload; static;
+    class function ToIp(const Bin: TCryptoIpCryptPfx): string; overload; static;
+  end;
+
 { Because @B[0] when B is empty is not nil }
 function BytesPointer(B: TBytes): PByte;
 
@@ -815,6 +822,28 @@ class function TBytesHelper.Compare(const A, B: TBytes): Integer;
 begin
   SameSize(A, B);
   Result := sodium_compare(@A[0], @B[0], Length(A));
+end;
+
+{ TSodiumIp }
+
+class function TSodiumIp.ToBin(const Ip: string; var Bin: TCryptoIpBin): Boolean;
+begin
+  Result := sodium_ip2bin(Bin, PAnsiChar(AnsiString(Ip)), Length(Ip)) = 0;
+end;
+
+class function TSodiumIp.ToIp(const Bin: TCryptoIpBin): string;
+var
+  Buf: RawByteString;
+begin
+  SetLength(Buf, 46);
+  sodium_bin2ip(@Buf[1], 46, Bin);
+  SetLength(Buf, Length(PAnsiChar(Buf)));
+  Result := string(Buf);
+end;
+
+class function TSodiumIp.ToIp(const Bin: TCryptoIpCryptPfx): string;
+begin
+  Result := ToIp(TCryptoIpBin(Bin));
 end;
 
 end.
