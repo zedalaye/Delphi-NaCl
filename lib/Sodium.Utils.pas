@@ -550,7 +550,13 @@ class function TBytesHelper.FromBase64(var Buf: TBytes; const Base64: string;
 var
   BufLen: NativeUInt;
 begin
-  BufLen := Length(Base64) div 4 * 3;
+  // Upper bound for the decoded length: ceil(Length(Base64) * 3 / 4).
+  // The previous `Length(Base64) div 4 * 3` formula was exact only for
+  // strictly-padded base64 — for unpadded encodings (Padding=False) it
+  // under-allocated by up to 2 bytes, causing sodium_base642bin to fail.
+  // Example: 86 chars of unpadded base64url decode to 64 bytes, but the
+  // old formula sized the buffer to 63.
+  BufLen := (NativeUInt(Length(Base64)) * 3 + 3) div 4;
   SetLength(Buf, BufLen);
   Result := FromBase64(@Buf[0], BufLen, Base64, Variant, Padding);
   if Result then
