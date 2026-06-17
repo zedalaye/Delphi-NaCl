@@ -9,19 +9,15 @@ interface
 const
   SODIUM_LIB = 'libsodium.dll';
 
-  LIBSODIUM_VERSION_STRING = '1.0.21';
+  LIBSODIUM_VERSION_STRING = '1.0.22';
 
   LIBSODIUM_LIBRARY_VERSION_MAJOR = 26;
-  LIBSODIUM_LIBRARY_VERSION_MINOR = 3;
+  LIBSODIUM_LIBRARY_VERSION_MINOR = 4;
 
 (* sodium/export.h *)
 
 const
-{$if defined(CPU32BITS)}
   SODIUM_SIZE_MAX = High(NativeUInt);
-{$else}
-  SODIUM_SIZE_MAX = High(UInt64);
-{$endif}
 
 (* sodium/core.h *)
 function sodium_init: Integer; cdecl; external SODIUM_LIB;
@@ -85,7 +81,7 @@ const
  * Computes the required length to encode BIN_LEN bytes as a base64 string
  * using the given variant. The computed length includes a trailing \0.
  *)
-function _SODIUM_BASE64_ENCODED_LEN(BIN_LEN: NativeUInt; VARIANT: Byte): UInt64; inline;
+function _SODIUM_BASE64_ENCODED_LEN(BIN_LEN: NativeUInt; VARIANT: Byte): NativeUInt; inline;
 
 function sodium_base64_encoded_len(const bin_len: NativeUInt; const variant: Integer): NativeUInt; cdecl; external SODIUM_LIB;
 
@@ -852,6 +848,64 @@ function crypto_hash_sha512_final(var state: TCryptoHashSha512State;
 
 type
   TCryptoHashSha512Hash = array[0.._CRYPTO_HASH_SHA512_BYTES -1] of Byte;
+
+(* sodium/crypto_hash_sha3.h *)
+
+type
+  {$ALIGN 16}
+  TCryptoHashSha3256State = record
+    opaque: array[0..256-1] of Byte;
+  end;
+  {$ALIGN 1}
+
+function crypto_hash_sha3256_statebytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_HASH_SHA3256_BYTES = 32;
+function crypto_hash_sha3256_bytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+function crypto_hash_sha3256(&out: PByte; const &in: PByte;
+                             inlen: UInt64): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_hash_sha3256_init(var state: TCryptoHashSha3256State): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_hash_sha3256_update(var state: TCryptoHashSha3256State;
+                                    const &in: PByte;
+                                    inlen: UInt64): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_hash_sha3256_final(var state: TCryptoHashSha3256State;
+                                   &out: PByte): Integer; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoHashSha3256Hash = array[0.._CRYPTO_HASH_SHA3256_BYTES -1] of Byte;
+
+type
+  {$ALIGN 16}
+  TCryptoHashSha3512State = record
+    opaque: array[0..256-1] of Byte;
+  end;
+  {$ALIGN 1}
+
+function crypto_hash_sha3512_statebytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_HASH_SHA3512_BYTES = 64;
+function crypto_hash_sha3512_bytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+function crypto_hash_sha3512(&out: PByte; const &in: PByte;
+                             inlen: UInt64): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_hash_sha3512_init(var state: TCryptoHashSha3512State): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_hash_sha3512_update(var state: TCryptoHashSha3512State;
+                                    const &in: PByte;
+                                    inlen: UInt64): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_hash_sha3512_final(var state: TCryptoHashSha3512State;
+                                   &out: PByte): Integer; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoHashSha3512Hash = array[0.._CRYPTO_HASH_SHA3512_BYTES -1] of Byte;
 
 (* sodium/crypto_hash.h *)
 
@@ -2376,6 +2430,151 @@ function crypto_kdf_derive_from_key(subkey: PByte; subkey_len: NativeUInt;
 
 procedure crypto_kdf_keygen(var k: TCryptoKdfKey); cdecl; external SODIUM_LIB;
 
+(* sodium/crypto_kem_mlkem768.h *)
+
+const
+  _CRYPTO_KEM_MLKEM768_PUBLICKEYBYTES = 1184;
+function crypto_kem_mlkem768_publickeybytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_MLKEM768_SECRETKEYBYTES = 2400;
+function crypto_kem_mlkem768_secretkeybytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_MLKEM768_CIPHERTEXTBYTES = 1088;
+function crypto_kem_mlkem768_ciphertextbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_MLKEM768_SHAREDSECRETBYTES = 32;
+function crypto_kem_mlkem768_sharedsecretbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_MLKEM768_SEEDBYTES = 64;
+function crypto_kem_mlkem768_seedbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoKemMlkem768PublicKey = array[0.._CRYPTO_KEM_MLKEM768_PUBLICKEYBYTES-1] of Byte;
+  TCryptoKemMlkem768SecretKey = array[0.._CRYPTO_KEM_MLKEM768_SECRETKEYBYTES-1] of Byte;
+  TCryptoKemMlkem768Seed = array[0.._CRYPTO_KEM_MLKEM768_SEEDBYTES-1] of Byte;
+
+function crypto_kem_mlkem768_seed_keypair(var pk: TCryptoKemMlkem768PublicKey;
+                                          var sk: TCryptoKemMlkem768SecretKey;
+                                          const seed: TCryptoKemMlkem768Seed):Integer; cdecl; external SODIUM_LIB;
+
+function crypto_kem_mlkem768_keypair(var pk: TCryptoKemMlkem768PublicKey;
+                                     var sk: TCryptoKemMlkem768SecretKey):Integer; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoKemMlkem768CipherText = array[0.._CRYPTO_KEM_MLKEM768_CIPHERTEXTBYTES-1] of Byte;
+  TCryptoKemMlkem768SharedSecret = array[0.._CRYPTO_KEM_MLKEM768_SHAREDSECRETBYTES-1] of Byte;
+
+function crypto_kem_mlkem768_enc(var ct: TCryptoKemMlkem768CipherText;
+                                 var ss: TCryptoKemMlkem768SharedSecret;
+                                 const pk: TCryptoKemMlkem768PublicKey):Integer; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoKemMlkem768Seed32 = array[0..32-1] of Byte;
+
+function crypto_kem_mlkem768_enc_deterministic(var ct: TCryptoKemMlkem768CipherText;
+                                               var ss: TCryptoKemMlkem768SharedSecret;
+                                               const pk: TCryptoKemMlkem768PublicKey;
+                                               const seed: TCryptoKemMlkem768Seed32):Integer; cdecl; external SODIUM_LIB;
+
+function crypto_kem_mlkem768_dec(var ss: TCryptoKemMlkem768SharedSecret;
+                                 const ct: TCryptoKemMlkem768CipherText;
+                                 const sk: TCryptoKemMlkem768SecretKey):Integer; cdecl; external SODIUM_LIB;
+
+(* sodium/crypto_kem_xwing.h *)
+
+const
+  _CRYPTO_KEM_XWING_PUBLICKEYBYTES = 1216;
+function crypto_kem_xwing_publickeybytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_XWING_SECRETKEYBYTES = 32;
+function crypto_kem_xwing_secretkeybytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_XWING_CIPHERTEXTBYTES = 1120;
+function crypto_kem_xwing_ciphertextbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_XWING_SHAREDSECRETBYTES = 32;
+function crypto_kem_xwing_sharedsecretbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_XWING_SEEDBYTES = 32;
+function crypto_kem_xwing_seedbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoKemXWingPublicKey = array[0.._CRYPTO_KEM_XWING_PUBLICKEYBYTES-1] of Byte;
+  TCryptoKemXWingSecretKey = array[0.._CRYPTO_KEM_XWING_SECRETKEYBYTES-1] of Byte;
+  TCryptoKemXWingSeed = array[0.._CRYPTO_KEM_XWING_SEEDBYTES-1] of Byte;
+
+function crypto_kem_xwing_seed_keypair(var pk: TCryptoKemXWingPublicKey;
+                                       var sk: TCryptoKemXWingSecretKey;
+                                       const seed: TCryptoKemXWingSeed): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_kem_xwing_keypair(var pk: TCryptoKemXWingPublicKey;
+                                  var sk: TCryptoKemXWingSecretKey): Integer; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoKemXWingCipherText = array[0.._CRYPTO_KEM_XWING_CIPHERTEXTBYTES-1] of Byte;
+  TCryptoKemXWingSharedSecret = array[0.._CRYPTO_KEM_XWING_SHAREDSECRETBYTES-1] of Byte;
+
+function crypto_kem_xwing_enc(var ct: TCryptoKemXWingCipherText;
+                              var ss: TCryptoKemXWingSharedSecret;
+                              const pk: TCryptoKemXWingPublicKey): Integer; cdecl; external SODIUM_LIB;
+
+type
+  TCryptoKemXWingSeed64 = array[0..64-1] of Byte;
+
+function crypto_kem_xwing_enc_deterministic(var ct: TCryptoKemXWingCipherText;
+                                            var ss: TCryptoKemXWingSharedSecret;
+                                            const pk: TCryptoKemXWingPublicKey;
+                                            const seed: TCryptoKemXWingSeed64): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_kem_xwing_dec(var ss: TCryptoKemXWingSharedSecret;
+                              const ct: TCryptoKemXWingCipherText;
+                              const sk: TCryptoKemXWingSecretKey): Integer; cdecl; external SODIUM_LIB;
+
+(* sodium/crypto_kem.h *)
+
+const
+  _CRYPTO_KEM_PUBLICKEYBYTES = _CRYPTO_KEM_XWING_PUBLICKEYBYTES;
+function crypto_kem_publickeybytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_SECRETKEYBYTES = _CRYPTO_KEM_XWING_SECRETKEYBYTES;
+function crypto_kem_secretkeybytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_CIPHERTEXTBYTES = _CRYPTO_KEM_XWING_CIPHERTEXTBYTES;
+function crypto_kem_ciphertextbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_SHAREDSECRETBYTES = _CRYPTO_KEM_XWING_SHAREDSECRETBYTES;
+function crypto_kem_sharedsecretbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_SEEDBYTES = _CRYPTO_KEM_XWING_SEEDBYTES;
+function crypto_kem_seedbytes: NativeUInt; cdecl; external SODIUM_LIB;
+
+const
+  _CRYPTO_KEM_PRIMITIVE = 'xwing';
+function crypto_kem_primitive: PAnsiChar; cdecl; external SODIUM_LIB;
+
+function crypto_kem_seed_keypair(pk: PByte; sk: PByte;
+                                 const seed: PByte): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_kem_keypair(pk: PByte; sk: PByte): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_kem_enc(ct: PByte; ss: PByte;
+                        const pk: PByte): Integer; cdecl; external SODIUM_LIB;
+
+function crypto_kem_dec(ss: PByte; const ct: PByte;
+                        const sk: PByte): Integer; cdecl; external SODIUM_LIB;
+
 (* sodium/crypto_kx.h *)
 
 const
@@ -3710,18 +3909,30 @@ end;
 
 (* sodium/utils.h *)
 
-function _SODIUM_BASE64_ENCODED_LEN(BIN_LEN: NativeUInt; VARIANT: Byte): UInt64; inline;
+function _SODIUM_BASE64_ENCODED_LEN(BIN_LEN: NativeUInt; VARIANT: Byte): NativeUInt; inline;
 begin
   {
-    (((BIN_LEN) / 3U) * 4U + \
-    ((((BIN_LEN) - ((BIN_LEN) / 3U) * 3U) | (((BIN_LEN) - ((BIN_LEN) / 3U) * 3U) >> 1)) & 1U) * \
-     (4U - (~((((VARIANT) & 2U) >> 1) - 1U) & (3U - ((BIN_LEN) - ((BIN_LEN) / 3U) * 3U)))) + 1U)
+    ((BIN_LEN) / 3U > (SIZE_MAX - 5) / 4U                                      \
+       ? (size_t)SIZE_MAX                                                      \
+       : (((BIN_LEN) / 3U) * 4U +                                              \
+          ((((BIN_LEN) - ((BIN_LEN) / 3U) * 3U) |                              \
+            (((BIN_LEN) - ((BIN_LEN) / 3U) * 3U) >> 1)) &                      \
+           1U) *                                                               \
+              (4U - ((0U - (((VARIANT) & 2U) >> 1)) &                          \
+                     (3U - ((BIN_LEN) - ((BIN_LEN) / 3U) * 3U)))) +            \
+          1U))
   }
 
-  Result :=
-    (((BIN_LEN) div 3) * 4 +
-    ((((BIN_LEN) - ((BIN_LEN) div 3) * 3) or (((BIN_LEN) - ((BIN_LEN) div 3) * 3) shr 1)) and 1) *
-     (4 - (not((((VARIANT) and 2) shr 1) - 1) and (3 - ((BIN_LEN) - ((BIN_LEN) div 3) * 3)))) + 1);
+  if BIN_LEN div 3 > (SODIUM_SIZE_MAX - 5) div 4 then
+    Result := SODIUM_SIZE_MAX
+  else
+    Result := (
+      (BIN_LEN div 3) * 4 + (
+        (
+          (BIN_LEN - (BIN_LEN div 3) * 3) or ((BIN_LEN - (BIN_LEN div 3) * 3) shr 1)
+        ) and 1
+      ) * (4 - (not(((VARIANT and 2) shr 1) - 1) and (3 - (BIN_LEN - (BIN_LEN div 3) * 3)))) + 1
+    );
 end;
 
 (* sodium/randombytes.h *)

@@ -6,25 +6,13 @@ uses
   System.SysUtils,
   libsodium, Sodium.Utils;
 
-type
-  TCryptoHashSha256Hash = libsodium.TCryptoHashSha256Hash;
-  TCryptoHashSha512Hash = libsodium.TCryptoHashSha512Hash;
-  TCryptoHashHash       = libsodium.TCryptoHashHash;
-
-  TCryptoHash = record
-    class function Primitive: string; static;
-
-    class function Sha256(var &Out: TCryptoHashSha256Hash; const &In; Len: NativeUInt): Boolean; overload; static;
-    class function Sha256(var &Out: TCryptoHashSha256Hash; const &In: TBytes): Boolean; overload; static;
-    class function Sha256(var &Out: TCryptoHashSha256Hash; const InProc: TCryptoDataProc): Boolean; overload; static;
-
-    class function Sha512(var &Out: TCryptoHashSha512Hash; const &In; Len: NativeUInt): Boolean; overload; static;
-    class function Sha512(var &Out: TCryptoHashSha512Hash; const &In: TBytes): Boolean; overload; static;
-    class function Sha512(var &Out: TCryptoHashSha512Hash; const InProc: TCryptoDataProc): Boolean; overload; static;
-
-    class function Default(var &Out: TCryptoHashHash; const &In; Len: NativeUInt): Boolean; overload; static;
-    class function Default(var &Out: TCryptoHashHash; const &In: TBytes): Boolean; overload; static;
-  end;
+(*
+ * NOTE: For general-purpose hashing, prefer crypto_generichash (BLAKE2b):
+ * variable-length output, optional keying, and faster than SHA-2.
+ * Use TCryptoHash only when you need a specific standard for interoperability.
+ * Caveat: SHA-256/SHA-512 are vulnerable to length-extension attacks
+ * (SHA-3 and BLAKE2b are not).
+ *)
 
 const
   _CRYPTO_GENERICHASH_KEYBYTES_MIN = libsodium._CRYPTO_GENERICHASH_KEYBYTES_MIN;
@@ -60,92 +48,39 @@ type
     class function Hash(var &Out: TCryptoGenericHashHash; const InProc: TCryptoDataProc; const Key: TBytes): Boolean; overload; static;
   end;
 
+  { SHA2 }
+  TCryptoHashSha256Hash  = libsodium.TCryptoHashSha256Hash;
+  TCryptoHashSha512Hash  = libsodium.TCryptoHashSha512Hash;
+  { SHA3 }
+  TCryptoHashSha3256Hash = libsodium.TCryptoHashSha3256Hash;
+  TCryptoHashSha3512Hash = libsodium.TCryptoHashSha3512Hash;
+  { Sodium Default }
+  TCryptoHashHash        = libsodium.TCryptoHashHash;
+
+  TCryptoHash = record
+    class function Primitive: string; static;
+
+    class function Sha256(var &Out: TCryptoHashSha256Hash; const &In; Len: NativeUInt): Boolean; overload; static;
+    class function Sha256(var &Out: TCryptoHashSha256Hash; const &In: TBytes): Boolean; overload; static;
+    class function Sha256(var &Out: TCryptoHashSha256Hash; const InProc: TCryptoDataProc): Boolean; overload; static;
+
+    class function Sha512(var &Out: TCryptoHashSha512Hash; const &In; Len: NativeUInt): Boolean; overload; static;
+    class function Sha512(var &Out: TCryptoHashSha512Hash; const &In: TBytes): Boolean; overload; static;
+    class function Sha512(var &Out: TCryptoHashSha512Hash; const InProc: TCryptoDataProc): Boolean; overload; static;
+
+    class function Sha3256(var &Out: TCryptoHashSha3256Hash; const &In; Len: NativeUInt): Boolean; overload; static;
+    class function Sha3256(var &Out: TCryptoHashSha3256Hash; const &In: TBytes): Boolean; overload; static;
+    class function Sha3256(var &Out: TCryptoHashSha3256Hash; const InProc: TCryptoDataProc): Boolean; overload; static;
+
+    class function Sha3512(var &Out: TCryptoHashSha3512Hash; const &In; Len: NativeUInt): Boolean; overload; static;
+    class function Sha3512(var &Out: TCryptoHashSha3512Hash; const &In: TBytes): Boolean; overload; static;
+    class function Sha3512(var &Out: TCryptoHashSha3512Hash; const InProc: TCryptoDataProc): Boolean; overload; static;
+
+    class function Default(var &Out: TCryptoHashHash; const &In; Len: NativeUInt): Boolean; overload; static;
+    class function Default(var &Out: TCryptoHashHash; const &In: TBytes): Boolean; overload; static;
+  end;
+
 implementation
-
-{ TCryptoHash }
-
-class function TCryptoHash.Primitive: string;
-begin
-  Result := string(crypto_hash_primitive);
-end;
-
-class function TCryptoHash.Sha256(var &Out: TCryptoHashSha256Hash;
-  const &In; Len: NativeUInt): Boolean;
-begin
-  Result := crypto_hash_sha256(@&Out[0], @&In, Len) = 0;
-end;
-
-class function TCryptoHash.Sha256(var &Out: TCryptoHashSha256Hash;
-  const &In: TBytes): Boolean;
-begin
-  Result := Sha256(&Out, &In[0], Length(&In));
-end;
-
-class function TCryptoHash.Sha256(var &Out: TCryptoHashSha256Hash;
-  const InProc: TCryptoDataProc): Boolean;
-var
-  State: TCryptoHashSha256State;
-  Buffer: TBytes;
-  Done: Boolean;
-begin
-  if crypto_hash_sha256_init(State) <> 0 then
-    Exit(False);
-
-  Done := False;
-  while not Done do
-  begin
-    InProc(Buffer, Done);
-    if crypto_hash_sha256_update(State, @Buffer[0], Length(Buffer)) <> 0 then
-      Exit(False);
-  end;
-
-  Result := crypto_hash_sha256_final(State, @&Out[0]) = 0;
-end;
-
-class function TCryptoHash.Sha512(var &Out: TCryptoHashSha512Hash;
-  const &In; Len: NativeUInt): Boolean;
-begin
-  Result := crypto_hash_sha512(@&Out[0], @&In, Len) = 0;
-end;
-
-class function TCryptoHash.Sha512(var &Out: TCryptoHashSha512Hash;
-  const &In: TBytes): Boolean;
-begin
-  Result := Sha512(&Out, &In[0], Length(&In));
-end;
-
-class function TCryptoHash.Sha512(var &Out: TCryptoHashSha512Hash;
-  const InProc: TCryptoDataProc): Boolean;
-var
-  State: TCryptoHashSha512State;
-  Buffer: TBytes;
-  Done: Boolean;
-begin
-  if crypto_hash_sha512_init(State) <> 0 then
-    Exit(False);
-
-  Done := False;
-  while not Done do
-  begin
-    InProc(Buffer, Done);
-    if crypto_hash_sha512_update(State, @Buffer[0], Length(Buffer)) <> 0 then
-      Exit(False);
-  end;
-
-  Result := crypto_hash_sha512_final(State, @&Out[0]) = 0;
-end;
-
-class function TCryptoHash.Default(var &Out: TCryptoHashHash;
-  const &In; Len: NativeUInt): Boolean;
-begin
-  Result := crypto_hash(@&Out[0], @&In, Len) = 0;
-end;
-
-class function TCryptoHash.Default(var &Out: TCryptoHashHash;
-  const &In: TBytes): Boolean;
-begin
-  Result := Default(&Out, &In[0], Length(&In));
-end;
 
 { TCryptoGenericHash }
 
@@ -279,6 +214,157 @@ class function TCryptoGenericHash.Hash(var &Out: TCryptoGenericHashHash;
   const InProc: TCryptoDataProc; const Key: TBytes): Boolean;
 begin
   Result := TCryptoGenericHash.Hash(&Out, InProc, @Key[0], Length(Key));
+end;
+
+{ TCryptoHash }
+
+class function TCryptoHash.Primitive: string;
+begin
+  Result := string(crypto_hash_primitive);
+end;
+
+class function TCryptoHash.Sha256(var &Out: TCryptoHashSha256Hash;
+  const &In; Len: NativeUInt): Boolean;
+begin
+  Result := crypto_hash_sha256(@&Out[0], @&In, Len) = 0;
+end;
+
+class function TCryptoHash.Sha256(var &Out: TCryptoHashSha256Hash;
+  const &In: TBytes): Boolean;
+begin
+  Result := Sha256(&Out, &In[0], Length(&In));
+end;
+
+class function TCryptoHash.Sha256(var &Out: TCryptoHashSha256Hash;
+  const InProc: TCryptoDataProc): Boolean;
+var
+  State: TCryptoHashSha256State;
+  Buffer: TBytes;
+  Done: Boolean;
+begin
+  if crypto_hash_sha256_init(State) <> 0 then
+    Exit(False);
+
+  Done := False;
+  while not Done do
+  begin
+    InProc(Buffer, Done);
+    if crypto_hash_sha256_update(State, @Buffer[0], Length(Buffer)) <> 0 then
+      Exit(False);
+  end;
+
+  Result := crypto_hash_sha256_final(State, @&Out[0]) = 0;
+end;
+
+class function TCryptoHash.Sha512(var &Out: TCryptoHashSha512Hash;
+  const &In; Len: NativeUInt): Boolean;
+begin
+  Result := crypto_hash_sha512(@&Out[0], @&In, Len) = 0;
+end;
+
+class function TCryptoHash.Sha512(var &Out: TCryptoHashSha512Hash;
+  const &In: TBytes): Boolean;
+begin
+  Result := Sha512(&Out, &In[0], Length(&In));
+end;
+
+class function TCryptoHash.Sha512(var &Out: TCryptoHashSha512Hash;
+  const InProc: TCryptoDataProc): Boolean;
+var
+  State: TCryptoHashSha512State;
+  Buffer: TBytes;
+  Done: Boolean;
+begin
+  if crypto_hash_sha512_init(State) <> 0 then
+    Exit(False);
+
+  Done := False;
+  while not Done do
+  begin
+    InProc(Buffer, Done);
+    if crypto_hash_sha512_update(State, @Buffer[0], Length(Buffer)) <> 0 then
+      Exit(False);
+  end;
+
+  Result := crypto_hash_sha512_final(State, @&Out[0]) = 0;
+end;
+
+class function TCryptoHash.Sha3256(var &Out: TCryptoHashSha3256Hash;
+  const &In; Len: NativeUInt): Boolean;
+begin
+  Result := crypto_hash_sha3256(@&Out[0], @&In, Len) = 0;
+end;
+
+class function TCryptoHash.Sha3256(var &Out: TCryptoHashSha3256Hash;
+  const &In: TBytes): Boolean;
+begin
+  Result := Sha3256(&Out, &In[0], Length(&In));
+end;
+
+class function TCryptoHash.Sha3256(var &Out: TCryptoHashSha3256Hash;
+  const InProc: TCryptoDataProc): Boolean;
+var
+  State: TCryptoHashSha3256State;
+  Buffer: TBytes;
+  Done: Boolean;
+begin
+  if crypto_hash_sha3256_init(State) <> 0 then
+    Exit(False);
+
+  Done := False;
+  while not Done do
+  begin
+    InProc(Buffer, Done);
+    if crypto_hash_sha3256_update(State, @Buffer[0], Length(Buffer)) <> 0 then
+      Exit(False);
+  end;
+
+  Result := crypto_hash_sha3256_final(State, @&Out[0]) = 0;
+end;
+
+class function TCryptoHash.Sha3512(var &Out: TCryptoHashSha3512Hash;
+  const &In; Len: NativeUInt): Boolean;
+begin
+  Result := crypto_hash_sha3512(@&Out[0], @&In, Len) = 0;
+end;
+
+class function TCryptoHash.Sha3512(var &Out: TCryptoHashSha3512Hash;
+  const &In: TBytes): Boolean;
+begin
+  Result := Sha3512(&Out, &In[0], Length(&In));
+end;
+
+class function TCryptoHash.Sha3512(var &Out: TCryptoHashSha3512Hash;
+  const InProc: TCryptoDataProc): Boolean;
+var
+  State: TCryptoHashSha3512State;
+  Buffer: TBytes;
+  Done: Boolean;
+begin
+  if crypto_hash_sha3512_init(State) <> 0 then
+    Exit(False);
+
+  Done := False;
+  while not Done do
+  begin
+    InProc(Buffer, Done);
+    if crypto_hash_sha3512_update(State, @Buffer[0], Length(Buffer)) <> 0 then
+      Exit(False);
+  end;
+
+  Result := crypto_hash_sha3512_final(State, @&Out[0]) = 0;
+end;
+
+class function TCryptoHash.Default(var &Out: TCryptoHashHash;
+  const &In; Len: NativeUInt): Boolean;
+begin
+  Result := crypto_hash(@&Out[0], @&In, Len) = 0;
+end;
+
+class function TCryptoHash.Default(var &Out: TCryptoHashHash;
+  const &In: TBytes): Boolean;
+begin
+  Result := Default(&Out, &In[0], Length(&In));
 end;
 
 end.
