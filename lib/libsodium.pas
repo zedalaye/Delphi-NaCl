@@ -2250,9 +2250,13 @@ procedure crypto_ipcrypt_decrypt(var &out: TCryptoIpBin;
                                  const &in: TCryptoIpCrypt;
                                  const k: TCryptoIpCryptKey); cdecl; external SODIUM_LIB;
 
+{ NOTE: the C tweak[] parameter decays to a pointer; declaring it as an 8-byte
+  `const` array value would let the Win64 ABI pass it by value in a register,
+  which libsodium then dereferences as an address -> ACCESS_VIOLATION (same
+  class of bug as issue #4). It must be a pointer. }
 procedure crypto_ipcrypt_nd_encrypt(var &out: TCryptoIpCryptNd;
                                     const &in: TCryptoIpBin;
-                                    const t: TCryptoIpCryptNdTweak;
+                                    const t: PByte;
                                     const k: TCryptoIpCryptNdKey); cdecl; external SODIUM_LIB;
 
 procedure crypto_ipcrypt_nd_decrypt(var &out: TCryptoIpBin;
@@ -2291,19 +2295,24 @@ const
 function crypto_kdf_blake2b_contextbytes: NativeUint; cdecl; external SODIUM_LIB;
 
 type
-  TCryptoKdfBlake2bContext = array[0.._CRYPTO_KDF_BLAKE2B_CONTEXTBYTES -1] of Byte;
+  PCryptoKdfBlake2bContext = ^TCryptoKdfBlake2bContext;
+  TCryptoKdfBlake2bContext = packed array[0.._CRYPTO_KDF_BLAKE2B_CONTEXTBYTES -1] of Byte;
 
 const
   _CRYPTO_KDF_BLAKE2B_KEYBYTES = 32;
 function crypto_kdf_blake2b_keybytes: NativeUint; cdecl; external SODIUM_LIB;
 
 type
-  TCryptoKdfBlake2bKey = array[0.._CRYPTO_KDF_BLAKE2B_KEYBYTES -1] of Byte;
+  PCryptoKdfBlake2bKey = ^TCryptoKdfBlake2bKey;
+  TCryptoKdfBlake2bKey = packed array[0.._CRYPTO_KDF_BLAKE2B_KEYBYTES -1] of Byte;
 
+{ NOTE: ctx[]/key[] decay to pointers in C and MUST be declared as pointers
+  here, otherwise the 8-byte ctx is passed by value on Win64 and dereferenced
+  as an address -> ACCESS_VIOLATION (same bug as issue #4). }
 function crypto_kdf_blake2b_derive_from_key(subkey: PByte; subkey_len: NativeUInt;
                                             subkey_id: UInt64;
-                                            const ctx: TCryptoKdfBlake2bContext;
-                                            const key: TCryptoKdfBlake2bKey): Integer; cdecl; external SODIUM_LIB;
+                                            const ctx: PCryptoKdfBlake2bContext;
+                                            const key: PCryptoKdfBlake2bKey): Integer; cdecl; external SODIUM_LIB;
 
 (* sodium/crypto_kdf_hkdf_sha256.h *)
 

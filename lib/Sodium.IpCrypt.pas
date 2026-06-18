@@ -97,7 +97,7 @@ begin
   if TSodiumIp.ToBin(Ip, BinIp) then
   begin
     TBytes.Random(Tweak, SizeOf(Tweak));
-    crypto_ipcrypt_nd_encrypt(CipheredIp, BinIp, Tweak, Key);
+    crypto_ipcrypt_nd_encrypt(CipheredIp, BinIp, @Tweak[0], Key);
     Result := True;
   end
   else

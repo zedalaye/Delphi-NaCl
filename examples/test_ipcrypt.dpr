@@ -55,7 +55,7 @@ begin
 
     TBytes.Random(Tweak, SizeOf(Tweak));
 
-    crypto_ipcrypt_nd_encrypt(CipheredIp, IpBin, Tweak, Key);
+    crypto_ipcrypt_nd_encrypt(CipheredIp, IpBin, @Tweak[0], Key);
     crypto_ipcrypt_nd_decrypt(DecipheredIp, CipheredIp, Key);
 
     WriteLn(TSodiumIp.ToIp(DecipheredIp), ' => ', TBytes.ToHex(CipheredIp, SizeOf(CipheredIp)));
