@@ -65,7 +65,7 @@ class function TCryptoKdf.DeriveFromKey(var SubKey; SubKeyLen: NativeUInt; SubKe
   const Context: TCryptoKdfContext; const MasterKey: TCryptoKdfKey): Boolean;
 begin
   Result := crypto_kdf_derive_from_key(@SubKey, SubKeyLen, SubKeyId,
-              Context, MasterKey) = 0;
+              @Context, @MasterKey) = 0;
 end;
 
 { TCryptoKdfHkdfSha256 }
@@ -81,7 +81,7 @@ class function TCryptoKdfHkdfSha256.Extract(
 begin
   Result := crypto_kdf_hkdf_sha256_extract(MasterKey,
               BytesPointer(Salt), Length(Salt),
-              @InputKeyingMaterial[0], Length(InputKeyingMaterial)) = 0;
+              BytesPointer(InputKeyingMaterial), Length(InputKeyingMaterial)) = 0;
 end;
 
 class function TCryptoKdfHkdfSha256.Extract(
@@ -99,7 +99,7 @@ begin
   while not Done do
   begin
     InputKeyingMaterialProc(Buf, Done);
-    if crypto_kdf_hkdf_sha256_extract_update(State, @Buf[0], Length(Buf)) <> 0 then
+    if crypto_kdf_hkdf_sha256_extract_update(State, BytesPointer(Buf), Length(Buf)) <> 0 then
       Exit(False);
   end;
 
@@ -108,9 +108,15 @@ end;
 
 class function TCryptoKdfHkdfSha256.Expand(var SubKey; SubKeyLen: NativeUInt;
   const Context: RawByteString; const MasterKey: TCryptoKdfHkdfSha256Key): Boolean;
+var
+  Ctx: PAnsiChar;
 begin
+  if Length(Context) = 0 then
+    Ctx := nil
+  else
+    Ctx := @Context[1];
   Result := crypto_kdf_hkdf_sha256_expand(@SubKey, SubKeyLen,
-              @Context[1], Length(Context),
+              Ctx, Length(Context),
               MasterKey) = 0;
 end;
 
@@ -127,7 +133,7 @@ class function TCryptoKdfHkdfSha512.Extract(
 begin
   Result := crypto_kdf_hkdf_sha512_extract(MasterKey,
               BytesPointer(Salt), Length(Salt),
-              @InputKeyingMaterial[0], Length(InputKeyingMaterial)) = 0;
+              BytesPointer(InputKeyingMaterial), Length(InputKeyingMaterial)) = 0;
 end;
 
 class function TCryptoKdfHkdfSha512.Extract(
@@ -145,7 +151,7 @@ begin
   while not Done do
   begin
     InputKeyingMaterialProc(Buf, Done);
-    if crypto_kdf_hkdf_sha512_extract_update(State, @Buf[0], Length(Buf)) <> 0 then
+    if crypto_kdf_hkdf_sha512_extract_update(State, BytesPointer(Buf), Length(Buf)) <> 0 then
       Exit(False);
   end;
 
@@ -154,9 +160,15 @@ end;
 
 class function TCryptoKdfHkdfSha512.Expand(var SubKey; SubKeyLen: NativeUInt;
   const Context: RawByteString; const MasterKey: TCryptoKdfHkdfSha512Key): Boolean;
+var
+  Ctx: PAnsiChar;
 begin
+  if Length(Context) = 0 then
+    Ctx := nil
+  else
+    Ctx := @Context[1];
   Result := crypto_kdf_hkdf_sha512_expand(@SubKey, SubKeyLen,
-              @Context[1], Length(Context),
+              Ctx, Length(Context),
               MasterKey) = 0;
 end;
 

@@ -2410,23 +2410,29 @@ const
 function crypto_kdf_contextbytes: NativeUInt; cdecl; external SODIUM_LIB;
 
 type
-  TCryptoKdfContext = array[0.._CRYPTO_KDF_CONTEXTBYTES-1] of AnsiChar;
+  PCryptoKdfContext = ^TCryptoKdfContext;
+  TCryptoKdfContext = packed array[0.._CRYPTO_KDF_CONTEXTBYTES-1] of AnsiChar;
 
 const
   _CRYPTO_KDF_KEYBYTES = _CRYPTO_KDF_BLAKE2B_KEYBYTES;
 function crypto_kdf_keybytes: NativeUInt; cdecl; external SODIUM_LIB;
 
 type
-  TCryptoKdfKey = array[0.._CRYPTO_KDF_KEYBYTES-1] of Byte;
+  PCryptoKdfKey = ^TCryptoKdfKey;
+  TCryptoKdfKey = packed array[0.._CRYPTO_KDF_KEYBYTES-1] of Byte;
 
 const
   _CRYPTO_KDF_PRIMITIVE = 'blake2b';
 function crypto_kdf_primitive: PAnsiChar; cdecl; external SODIUM_LIB;
 
+{ NOTE: In C, the ctx[] and key[] array parameters decay to pointers, so they
+  MUST be declared as pointers here. Declaring them as `const` array values lets
+  the Win64 ABI pass the 8-byte ctx by value in a register, which libsodium then
+  dereferences as an address -> ACCESS_VIOLATION (see issue #4). }
 function crypto_kdf_derive_from_key(subkey: PByte; subkey_len: NativeUInt;
                                     subkey_id: UInt64;
-                                    const ctx: TCryptoKdfContext;
-                                    const key: TCryptoKdfKey): Integer; cdecl; external SODIUM_LIB;
+                                    const ctx: PCryptoKdfContext;
+                                    const key: PCryptoKdfKey): Integer; cdecl; external SODIUM_LIB;
 
 procedure crypto_kdf_keygen(var k: TCryptoKdfKey); cdecl; external SODIUM_LIB;
 

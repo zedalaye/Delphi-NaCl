@@ -24,13 +24,13 @@ begin
 
   WriteLn('master_key=', TBytes.ToHex(MasterKey, SizeOf(MasterKey)));
 
-  crypto_kdf_derive_from_key(@subkey_1[0], SizeOf(subkey_1), 1, Ctx, MasterKey);
+  crypto_kdf_derive_from_key(@subkey_1[0], SizeOf(subkey_1), 1, @Ctx, @MasterKey);
   WriteLn('subkey_1=',   TBytes.ToHex(subkey_1, SizeOf(subkey_1)));
 
-  crypto_kdf_derive_from_key(@subkey_2[0], SizeOf(subkey_2), 2, Ctx, MasterKey);
+  crypto_kdf_derive_from_key(@subkey_2[0], SizeOf(subkey_2), 2, @Ctx, @MasterKey);
   WriteLn('subkey_2=',   TBytes.ToHex(subkey_2, SizeOf(subkey_2)));
 
-  crypto_kdf_derive_from_key(@subkey_3[0], SizeOf(subkey_3), 3, Ctx, MasterKey);
+  crypto_kdf_derive_from_key(@subkey_3[0], SizeOf(subkey_3), 3, @Ctx, @MasterKey);
   WriteLn('subkey_3=',   TBytes.ToHex(subkey_3, SizeOf(subkey_3)));
 end;
 {$endif}
